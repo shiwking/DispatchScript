@@ -1,8 +1,10 @@
 pipeline {
-    agent none
-        stage('Test') {
-            steps {
-                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+    agent any 
+    stages {
+        stage('Build') { 
+            steps { 
+                sh 'echo  python3 /var/jenkins_home/DispatchScript/DistributeScripts.py' 
             }
         }
-        }
+    }
+  }
