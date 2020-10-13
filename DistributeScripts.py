@@ -20,15 +20,19 @@ class DistributeScripts(object):
 
     def getDevice(self):
 
-        # TestDevices=self.ATX.devIPList #链接设备获取设备列表
-        TestDevices=['10.30.20.29:21292']
+        TestDevices=self.ATX.devIPList #链接设备获取设备列表
+
         return TestDevices
 
     def getJob(self):
-        TestScripts=[
-                     "test47.air",
-                     ]
-        return TestScripts
+        TestScripts=ServerCommand("ls /Muilt/Muilt/testflow/scripts/TestCase")
+        result = ServerCommand("ls /Muilt/Muilt/testflow/scripts/TestCase")
+        num = result.split("\n")
+        for i in num:
+            if i == '':
+                num.remove(i)
+        print(num)
+        return num
 
     def AutoConfig(self):
         #记录开始时间

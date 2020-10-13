@@ -1,10 +1,16 @@
 pipeline {
     agent any 
     stages {
-        stage('Build') { 
+        stage('BuildDockerFile') { 
             steps { 
-                sh 'echo  python3 /var/jenkins_home/DispatchScript/DistributeScripts.py' 
+                sh 'echo  python3 /var/jenkins_home/DispatchScript/BuildDockerFile.py' 
             }
         }
+        stage('runCase') {
+            steps {
+                sh 'echo  python3 /var/jenkins_home/DispatchScript/DistributeScripts.py'
+            }
+        }
+
     }
   }
