@@ -1,11 +1,15 @@
 pipeline {
-    agent any 
+    agent none 
     stages {
-        stage('Run Case') {
-            steps {
-                sh 'python3 -u /var/jenkins_home/DispatchScript/DistributeScripts.py'
+        stage('Build') { 
+            agent {
+                docker {
+                    image 'python:2-alpine' 
+                }
             }
-
+            steps {
+                sh 'python -u /var/jenkins_home/DispatchScript/DistributeScripts.py' 
+            }
         }
     }
-  }
+}
