@@ -10,12 +10,11 @@ def ServerCommand(command,IP=SERVERIP,port=PORT,username=USERNAME,passwrod=PASSW
     :param user: 用户名
     :param password: 用户密码
     """
-
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(IP,port,username,passwrod) #链接服务器
     stdin, stdout, stderr = ssh.exec_command(command)   #输入命令行
-    # print("Command 指令发送成功！")
+    return  stdout.read().decode('utf-8')
 
 def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, password=PASSWORD ):
 
@@ -117,4 +116,8 @@ def SearchTestID(testName):
 
 
 if __name__ == '__main__':
-    RemoteScp("219")
+    result=ServerCommand("ls /Muilt/Muilt/testflow/scripts/TestCase")
+    num = result.split("\n")
+    for i in num:
+        if i=='':
+            num.remove(i)

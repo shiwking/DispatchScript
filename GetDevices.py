@@ -19,7 +19,6 @@ class ConnectATX(object):
         r = requests.get(URL,headers=hearder)
         reprot=r.json()
         for  deviceinfo  in reprot['devices']:
-            print(deviceinfo)
             if deviceinfo['present']==True and deviceinfo['using']==False:
                 devUUID=deviceinfo['udid']
                 self.DevUUIDList.append(devUUID)
@@ -58,4 +57,4 @@ class ConnectATX(object):
 if __name__ == '__main__':
      CA=ConnectATX()
      # print(CA.getDevicesIP())
-     CA.releaseDevice()
+     # CA.releaseDevice()

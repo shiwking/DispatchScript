@@ -25,13 +25,12 @@ class DistributeScripts(object):
         return TestDevices
 
     def getJob(self):
-        TestScripts=ServerCommand("ls /Muilt/Muilt/testflow/scripts/TestCase")
+
         result = ServerCommand("ls /Muilt/Muilt/testflow/scripts/TestCase")
         num = result.split("\n")
         for i in num:
             if i == '':
                 num.remove(i)
-        print(num)
         return num
 
     def AutoConfig(self):
