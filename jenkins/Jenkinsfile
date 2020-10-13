@@ -3,12 +3,12 @@ pipeline {
     stages {
         stage('Build DockerFile') {
             steps { 
-                sh 'echo  python3 -u /var/jenkins_home/DispatchScript/BuildDockerFile.py'
+                sh 'python3 -u /var/jenkins_home/DispatchScript/BuildDockerFile.py'
             }
 
         stage('Run Case') {
             steps {
-                sh 'echo  python3 -u /var/jenkins_home/DispatchScript/DistributeScripts.py'
+                sh 'python3 -u /var/jenkins_home/DispatchScript/DistributeScripts.py'
             }
 
         }
