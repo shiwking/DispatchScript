@@ -9,7 +9,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'python3 -m /var/jenkins_home/DispatchScript/DistributeScripts.py' 
+                sh 'python3 -u  /var/jenkins_home/DispatchScript/DistributeScripts.py' 
             }
         }
     }
