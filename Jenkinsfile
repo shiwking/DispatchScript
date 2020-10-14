@@ -4,11 +4,11 @@ pipeline {
         stage('Build') { 
             agent {
                 docker {
-                    image 'python:2-alpine' 
+                    image 'python-jenkins' 
                 }
             }
             steps {
-                sh 'python -m /var/jenkins_home/DispatchScript/DistributeScripts.py' 
+                sh 'python3 -m /var/jenkins_home/DispatchScript/DistributeScripts.py' 
             }
         }
     }
