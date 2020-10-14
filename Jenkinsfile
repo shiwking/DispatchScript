@@ -5,6 +5,7 @@ pipeline {
             agent {
                 docker {
                     image 'python-jenkins' 
+		    args  '-v /var/jenkins_home:/var/jenkins_home'
                 }
             }
             steps {
