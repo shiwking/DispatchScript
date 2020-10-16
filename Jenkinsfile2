@@ -1,6 +1,19 @@
 pipeline {
     agent none
     stages {
+        stage('Install_APK') {
+            agent {
+                docker {
+                    image 'pkginstall'
+                    args  '-v /var/jenkins_home/Install_PKG:/var/jenkins_home/Install_PKG'
+                }
+            }
+            steps {
+                sh 'python3 -u  /var/jenkins_home/Install_PKG/run.py'
+            }
+
+
+
 
         stage('Build') {
             agent {
