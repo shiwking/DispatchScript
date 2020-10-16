@@ -55,7 +55,7 @@ class DockerOperation(object):
             ServerCommand("mkdir  " + datatype+"/"+JobName1)
             command = "docker cp " + DockerID + ":"+DOCKERLOGFILE+"/"+JobName1+'.log  ' + TESTRESULT + ReprotID + "/" + JobName1
             print(command)
-            command2 = "docker cp " + DockerID + ":"+PROJECEFILE + "data.json " + TESTRESULT + ReprotID + "/" + JobName1 + "/data.json"
+            command2 = "docker cp " + DockerID + ":"+DOCKERLOGFILE + "/data.json " + TESTRESULT + ReprotID + "/" + JobName1 + "/data.json"
             print(command2)
             ServerCommand(command2)
             ServerCommand(command)
