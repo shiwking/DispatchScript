@@ -23,7 +23,8 @@ class DockerOperation(object):
         JobName=JobName+"  "
         DevName=DevName+"  "
         Commd="python3  run.py "+JobClass+JobName+DevName
-        container = self.client.containers.run('airtest',Commd,detach=True)
+        volume = {"/Muilt": {"bind": "/Muilt", "mode": "rw"}}
+        container = self.client.containers.run('airtest',Commd,volumes=volume,detach=True)
         self.DockerList.append(container.short_id)
         return container.short_id
 
@@ -106,6 +107,7 @@ class DockerOperation(object):
 
 if __name__ == '__main__':
     DC=DockerOperation()
-    DC.getResultToServer("219")
+    volume={"/Muilt": {"bind": "/Muilt", "mode": "rw"}}
+    DC.client.containers.run('airtest',volumes=volume,detach=True)
 
 
