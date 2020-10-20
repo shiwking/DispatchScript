@@ -1,6 +1,7 @@
 from Setting import *
 import paramiko
 import pymysql
+import re
 def ServerCommand(command,IP=SERVERIP,port=PORT,username=USERNAME,passwrod=PASSWORD):
 
     """"

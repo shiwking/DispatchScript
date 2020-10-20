@@ -84,7 +84,7 @@ class DockerOperation(object):
     def TestResultConfirmation(self):
         """Docker 进程确认，每隔30秒确认Docker 进程是否结束，最长5分钟，如未结束当异常处理"""
         i=0
-        while i<10:
+        while i<60:
             if len(self.dockerList())==0:
                break
             sleep(5)

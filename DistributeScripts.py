@@ -4,13 +4,12 @@ from DockerOperation import *
 from CreatReportID import *
 import time
 from GetDevices import *
-
+from Setting import *
 class DistributeScripts(object):
     def __init__(self):
         self.testlist={}
         self.DockerOperation=DockerOperation()
         self.DockerOperation.StopAllContainer()
-        self.CreatID = CreatID()
         # self.ReportID = readReportID()
         self.ATX= ConnectATX()
         self.ATX.getDevicesIP()

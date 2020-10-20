@@ -1,10 +1,6 @@
 from time  import sleep
 import datetime
-from CreatReportID import *
 import os
-# SERVERIP="192.168.206.134"
-
-
 """脚本Docker运行目标服务器"""
 SERVERIP="10.30.20.99"
 SERVERIP2="10.30.20.29"
