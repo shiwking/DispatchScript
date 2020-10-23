@@ -20,7 +20,6 @@ class DistributeScripts(object):
     def getDevice(self):
 
         TestDevices=self.ATX.devIPList #链接设备获取设备列表
-
         return TestDevices
 
     def getJob(self):
@@ -57,14 +56,14 @@ class DistributeScripts(object):
                  ID=ID+1
             # 结果获取完成后初始化docker 容器进程
             self.DockerOperation.StopAllContainer()
-
+            self.ATX.releaseDevice()
 
         else:
+
             """脚本数量大于设备数量"""
             print("脚本数量大于设备数量")
             ExecutionNum = int(JobNum / DevNum)
             Remainder = (JobNum % DevNum)
-
             lunshu = 0
             while lunshu < ExecutionNum:
                 """判断执行轮数"""

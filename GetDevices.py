@@ -10,6 +10,9 @@ class ConnectATX(object):
 
     def getDevicesIP(self):
         """获取未使用设备的IP地址和端口"""
+        #初始化所有设备
+        self.releaseDevice()
+
         URL= self.BaseURL+'api/v1/devices'
         URL2 = self.BaseURL + 'api/v1/user/devices'
         hearder={
