@@ -5,7 +5,7 @@ pipeline {
         stage('install_pkg') {
             agent {
                 docker {
-                    image 'python-install'
+                    image 'pkginstall'
                     args  '-v /var/jenkins_home:/var/jenkins_home'
                 }
             }
