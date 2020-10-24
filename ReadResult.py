@@ -1,7 +1,7 @@
 TESTRESULT='/TestResult/'
 import time
 from  ServerConect import *
-
+from  CreatReportID import readReportID
 TestResult = []
 class Reprot(object):
     def  __int__(self):
@@ -32,12 +32,12 @@ class Reprot(object):
                             status = "Pass"
                         else:
                             status = "Fail"
-                        # FilePath = json_data["tests"][DevName]['path']
+                        runtime="%.3f" % (time.time() - json_data['start']),
                         FilePath = Path+"/"+TestCase+"/"+TestCase+".log/log.html"
                         print(FilePath)
                         devlist.append(DevName)
                     TestCaseResult = {'scriptName': TestCase, 'status': status, "path": FilePath, "createtime": createtime,
-                                      "device": devlist[0]}
+                                      "device": devlist[0],"runtime":runtime}
                     print(TestCaseResult)
                     TestResult.append(TestCaseResult)
             except:
@@ -76,7 +76,7 @@ class Reprot(object):
         testid = 0
         for caseResult in self.TestReSult:
             caseName=caseResult['scriptName']
-            runtime="30"
+            runtime=caseResult['runtime']
             logoinfo=caseResult['path']
             createtime=caseResult['createtime']
             teststatus=caseResult['status']
