@@ -2,7 +2,7 @@ pipeline {
     agent none
     stages {
 
-        stage('Build') {
+        stage('install_pkg') {
             agent {
                 docker {
                     image 'python-install'
