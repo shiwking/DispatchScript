@@ -10,16 +10,15 @@ class ConnectATX(object):
     def getDevicesIP(self):
         """获取未使用设备的IP地址和端口"""
         #初始化所有设备
-        self.releaseDevice()
 
         URL= self.BaseURL+'api/v1/devices'
         URL2 = self.BaseURL + 'api/v1/user/devices'
         hearder={
             'Cookie': self.userid,
         }
-
         r = requests.get(URL,headers=hearder)
         reprot=r.json()
+        print(reprot)
         for  deviceinfo  in reprot['devices']:
             if deviceinfo['present']==True and deviceinfo['using']==False:
                 devUUID=deviceinfo['udid']
@@ -42,7 +41,7 @@ class ConnectATX(object):
 
     def releaseDevice(self):
         """释放设备"""
-        print(self.devIPList)
+        # print(self.devIPList)
         hearder = {
             'Cookie': self.userid,
         }

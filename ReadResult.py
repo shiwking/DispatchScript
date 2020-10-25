@@ -38,6 +38,7 @@ class Reprot(object):
                         devlist.append(DevName)
                     TestCaseResult = {'scriptName': TestCase, 'status': status, "path": FilePath, "createtime": createtime,
                                       "device": devlist[0],"runtime":runtime}
+
                     print(TestCaseResult)
                     TestResult.append(TestCaseResult)
             except:
@@ -67,9 +68,9 @@ class Reprot(object):
         localtime1 = time.localtime(float(self.time[0]))
         localtime = time.strftime("%Y_%m_%d_%H_%M_%S", localtime1)
         testName='AutoTest'+(str(localtime))
-        runtime=str(int((self.time[1]-self.time[0])/60))
+        Allruntime=str(int((self.time[1]-self.time[0])/60))
         isDelete=0
-        insert_db_Summary(testName,AllNum,PassNum,FailNum,SkiplNum,runtime,localtime,isDelete)
+        insert_db_Summary(testName,AllNum,PassNum,FailNum,SkiplNum,Allruntime,localtime,isDelete)
         print("报告汇总结果写入成功")
 
         print("开始写入用例测试结果")

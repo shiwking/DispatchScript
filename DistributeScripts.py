@@ -56,7 +56,7 @@ class DistributeScripts(object):
                  ID=ID+1
             # 结果获取完成后初始化docker 容器进程
             self.DockerOperation.StopAllContainer()
-            self.ATX.releaseDevice()
+
 
         else:
 

@@ -1,0 +1,18 @@
+{
+    "start": 1603525009.945155,
+    "script": "installPKG.air",
+    "tests": {
+        "10.30.20.29:20068": {
+            "status": 0,
+            "path": "installPKG.air\\log\\10_30_20_29_20068\\log.html"
+        },
+        "10.30.20.29:20066": {
+            "status": 0,
+            "path": "installPKG.air\\log\\10_30_20_29_20066\\log.html"
+        },
+        "10.30.20.29:20064": {
+            "status": 0,
+            "path": "installPKG.air\\log\\10_30_20_29_20064\\log.html"
+        }
+    }
+}
