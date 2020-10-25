@@ -2,10 +2,10 @@ pipeline {
     agent none
     stages {
 
-        stage('Build') {
+        stage('InstallAPK') {
             agent {
                 docker {
-                    image 'pkginstall'
+                    image 'python-jenkins'
                     args  '-v /var/jenkins_home:/var/jenkins_home'
                 }
             }
