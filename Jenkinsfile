@@ -10,7 +10,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'python3 -u  /var/jenkins_home/Install_PKG/Sentting.py $TestAPKName $platform $environment'
+                sh 'python3 -u  /var/jenkins_home/Install_PKG/InstallMain.py $TestAPKName $platform $environment'
             }
         }
 
