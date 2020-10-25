@@ -1,10 +1,9 @@
 import requests
-from Setting import *
 import json
 class ConnectATX(object):
     def __init__(self):
-        self.BaseURL=ATXSERVER
-        self.userid='user_id="2|1:0|10:1600841623|7:user_id|32:c2hpd2tpbmdAYW5vbnltb3VzLmNvbQ==|142b8bf618d52712b74812e1b00b9b0f24f3a5a12c95457fe98f0878511d8156"; Path=/; Domain=10.30.20.29; Expires=Fri, 23 Oct 2020 06:13:43 GMT;'
+        self.BaseURL="http://10.30.20.29:4000/"
+        self.userid='user_id="2|1:0|10:1603520841|7:user_id|32:c2hpd2tpbmdAYW5vbnltb3VzLmNvbQ==|cc78f84418a6cb723a546d64b1145fc7bdf0f12294806e95deb91e1227aa46da"; Path=/; Domain=10.30.20.29; Expires=Fri, 23 Oct 2020 06:13:43 GMT;'
         self.DevUUIDList=[]
         self.devIPList=[]
 
@@ -43,7 +42,7 @@ class ConnectATX(object):
 
     def releaseDevice(self):
         """释放设备"""
-        print(self.DevUUIDList)
+        print(self.devIPList)
         hearder = {
             'Cookie': self.userid,
         }
@@ -59,5 +58,5 @@ class ConnectATX(object):
 
 if __name__ == '__main__':
      CA=ConnectATX()
-     # print(CA.getDevicesIP())
-     # CA.releaseDevice()
+     print(CA.getDevicesIP())
+     CA.releaseDevice()
