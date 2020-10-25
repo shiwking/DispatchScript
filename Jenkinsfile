@@ -5,12 +5,12 @@ pipeline {
         stage('install_pkg') {
             agent {
                 docker {
-                    image 'pkginstall'
+                    image 'python-jenkins'
                     args  '-v /var/jenkins_home:/var/jenkins_home'
                 }
             }
             steps {
-                sh 'python3 -u  /var/jenkins_home/Install_PKG/Setting.py $TestAPKName $platform $environment'
+                sh 'python3 -u  /var/jenkins_home/DispatchScript/Setting.py $TestAPKName $platform $environment'
             }
         }
 
