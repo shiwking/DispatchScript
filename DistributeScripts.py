@@ -21,6 +21,9 @@ class DistributeScripts(object):
 
         TestDevices=self.ATX.devIPList #链接设备获取设备列表
         return TestDevices
+    def getDevUUID(self,devip):
+        return self.ATX.devInfo[devip]
+
 
     def getJob(self):
 
@@ -30,6 +33,7 @@ class DistributeScripts(object):
             if i == '':
                 num.remove(i)
         return num
+
 
     def AutoConfig(self):
         #记录开始时间
@@ -72,7 +76,7 @@ class DistributeScripts(object):
                 self.DockerOperation.DockerList = []
                 print("开始分发脚本")
                 while DevID < DevNum:
-                    print("测试脚本名称：",self.getJob()[JobID] ,"运行设备名称:",self.getDevice()[DevID])
+                    print("测试脚本名称：",self.getJob()[JobID] ,"运行设备名称:",self.getDevUUID(self.getDevice()[DevID]))
                     self.DockerOperation.Runcontainers(self.getJob()[JobID], self.getDevice()[DevID])
                     JobID = JobID + 1
                     DevID = DevID + 1
@@ -127,6 +131,8 @@ class DistributeScripts(object):
         self.DockerOperation.getResultToServer(ReprotID=readReportID())
         #解析测试结果
         self.DockerOperation.readResult(ReprotID=readReportID(),runtime=runtime)
+
+
 
 
 

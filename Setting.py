@@ -28,3 +28,4 @@ MYSQLDB="reprot"
 
 
 ATXSERVER="http://10.30.20.29:4000/"
+DEVICEINFO="/testReprot/deviceInfo.json"
