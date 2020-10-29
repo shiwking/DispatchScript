@@ -65,3 +65,4 @@ APKPath = os.path.join(outpath, TestAPKName)
 if os.path.exists(APKPath):
     os.remove(APKPath)
     print("文件删除成功")
+sleep(10)
