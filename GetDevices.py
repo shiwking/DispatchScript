@@ -9,6 +9,7 @@ class ConnectATX(object):
         self.devIPList=[]
         self.devInfo= {}
 
+
     def getDevicesIP(self):
         """获取未使用设备的IP地址和端口"""
         #初始化所有设备
@@ -18,12 +19,16 @@ class ConnectATX(object):
         hearder={
             'Cookie': self.userid,
         }
+
         r = requests.get(URL,headers=hearder)
         reprot=r.json()
         print(reprot)
+
+
         for  deviceinfo  in reprot['devices']:
             if deviceinfo['present']==True and deviceinfo['using']==False:
                 devUUID=deviceinfo['udid']
+                self.idleTimeout(devUUID)
                 self.DevUUIDList.append(devUUID)
                 stu={"udid":devUUID}
                 devdata=json.dumps(stu)
@@ -62,9 +67,27 @@ class ConnectATX(object):
             else:
                 print(devUUID,"ATX设备释放失败！")
 
+    def idleTimeout(self,udid):
+        """
+        占用设备，修改占用设备时间1000分钟
+        """
+        hearder = {
+            'Cookie': self.userid,
+        }
+        URL = self.BaseURL + 'api/v1/user/devices'
+        stu = {
+                "udid": udid,
+                "idleTimeout": 60000
+            }
+        testdata= json.dumps(stu)
+        try:
+            requests.post(URL,data=testdata,headers=hearder)
+
+        except:
+            print("设备时间修改失败，请关注~")
 
 if __name__ == '__main__':
      CA=ConnectATX()
      CA.getDevicesIP()
-     # CA.releaseDevice()
+     CA.releaseDevice()
 

@@ -7,10 +7,7 @@ SERVERIP2="10.30.20.29"
 PORT="22"
 USERNAME="root"
 PASSWORD="root"
-# LOCALFILE="D:\docker-compose.yml"
-# REMOTEFILE="/Muilt/DockerSetting/docker-compose.yml"
-# BUILDDOCKER="cd /Muilt/DockerSetting/ && docker-compose -f docker-compose.yml up -d"
-# DOCKERBASEURL='tcp://192.168.206.134:2375'
+
 DOCKERBASEURL='tcp://10.30.20.99:2375'
 DODCERIDLIST=[]
 TESTRESULT="/TestResult/"
@@ -28,4 +25,5 @@ MYSQLDB="reprot"
 
 
 ATXSERVER="http://10.30.20.29:4000/"
-DEVICEINFO="/var/jenkins_home/deviceInfo.json"
+DEVICEINFO="/testReprot/deviceInfo.json"
+# DEVICEINFO="D:\\deviceInfo.json"
