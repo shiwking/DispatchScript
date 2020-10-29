@@ -25,5 +25,5 @@ MYSQLDB="reprot"
 
 
 ATXSERVER="http://10.30.20.29:4000/"
-DEVICEINFO="/testReprot/deviceInfo.json"
+DEVICEINFO="/var/jenkins_home/deviceInfo.json"
 # DEVICEINFO="D:\\deviceInfo.json"
