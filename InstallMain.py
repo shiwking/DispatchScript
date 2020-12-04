@@ -26,13 +26,13 @@ class  InstallPKG(object):
             self.deviceCategory = ["Android"]  # Android或IOS
             self.environment = ["Release"]  # 环境    Release或Develop
         elif platform.system().lower() == "linux":  # 判断当前运行环境为linux时
-            # self.Commad=sys.argv  # 上传前解除注释
-            # self.TestAPKName = self.Commad[1] # 上传前解除注释
-            # self.platform=[self.Commad[2]] # 上传前解除注释
-            # self.environment=[self.Commad[3]] # 上传前解除注释
-            self.TestAPKName = "first-test_P459_release_v32_0.32.1-1001_F2_27b158c7_e262f0fa7_26b96d031_d41bb5364_7b6db728_89dbfa1.apk"   # 上传前注释
-            self.deviceCategory = ["Android"]   # 上传前注释
-            self.environment = ["Release"]   # 上传前注释
+            self.Commad=sys.argv  # 上传前解除注释
+            self.TestAPKName = self.Commad[1] # 上传前解除注释
+            self.platform=[self.Commad[2]] # 上传前解除注释
+            self.environment=[self.Commad[3]] # 上传前解除注释
+            # self.TestAPKName = "first-test_P459_release_v32_0.32.1-1001_F2_27b158c7_e262f0fa7_26b96d031_d41bb5364_7b6db728_89dbfa1.apk"   # 上传前注释
+            # self.deviceCategory = ["Android"]   # 上传前注释
+            # self.environment = ["Release"]   # 上传前注释
         self.ConnectATX = ConnectATX()
         self.ConnectATX.getDevicesIP()
         self.InitDevList()
