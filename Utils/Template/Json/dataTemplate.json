@@ -1,0 +1,10 @@
+{
+    "start": 1606716501.9695337,
+    "script": "/Muilt/Muilt/testflow/scripts/TestCase/testAutomaticallyMatchesSelectionBox.air",
+    "tests": {
+        "10.30.20.29:21896": {
+            "status": 255,
+            "path": "/Muilt/Muilt/testflow/scripts/TestCase/testAutomaticallyMatchesSelectionBox.air/log/10_30_20_29_21896/log.html "
+        }
+    }
+}
