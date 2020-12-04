@@ -1,7 +1,11 @@
-
 import docker
+import os
 from  ServerConect import *
 from CreatReportID import *
+from  time import sleep
+from Utils.Tool.SystemTool import SystemTool
+from Utils.Tool.Transition import Transition
+from Utils.Constant.ConstantVar import ConstantVar
 class DockerOperation(object):
     def __init__(self):
         self.client = docker.DockerClient(base_url=DOCKERBASEURL)
@@ -38,31 +42,46 @@ class DockerOperation(object):
         container = self.client.containers.get(DockerID)
         return  container.logs()
 
-    def GetTestResult(self,DockerID,JobName):
-        """单个用例执行后获取测试结果"""
-        #切割脚本
+    def GetTestResult(self,DockerID,JobName,ADBRemoteConnectionAddress,starttime):
+        """
+       单个用例执行后获取测试结果   执行机器10.30.20.99
+       param DockerID:dockerID
+       param JobName:用例air名
+       param ADBRemoteConnectionAddress:ADB远程连接地址
+       param starttime:开始时间
+       """
         ReprotID=readReportID()
         print("开始存储%s结果"%JobName)
         Job=JobName.split('.')
         JobName1=Job[0]
         datatype=TESTRESULT + "/" +ReprotID
         #打包服务器上的日志文件
-
-
+        ADBAddress = ADBRemoteConnectionAddress.replace(".","_") # 将ADB远程连接地址的“.” 替换为“_”
+        ADBAddress = ADBAddress.replace(":", "_")  # 将ADB远程连接地址的“:” 替换为“_”
         try:
             sleep(5)
-            ServerCommand("mkdir  "+datatype)
-            ServerCommand("mkdir  " + datatype+"/ErrorLog")
-            ServerCommand("mkdir  " + datatype+"/"+JobName1)
-            command = "docker cp " + DockerID + ":"+DOCKERLOGFILE+"/"+JobName1+'.log  ' + TESTRESULT + ReprotID + "/" + JobName1
+            ServerCommand("mkdir  "+datatype) # 创建 /TestResult//82文件夹
+            ServerCommand("mkdir  " + datatype+"/ErrorLog") # 创建 /TestResult//82/ErrorLog'文件夹
+            ServerCommand("mkdir  " + datatype+"/"+JobName1)# 创建 /TestResult//82/testAutomaticallyMatchesSelectionBox文件夹
+            command = "docker cp " + DockerID + ":"+DOCKERLOGFILE+"/"+JobName1+'.log  ' + TESTRESULT + ReprotID + "/" + JobName1 # 从docker上复制/LogDir/testAutomaticallyMatchesSelectionBox.log  到/TestResult/83/testAutomaticallyMatchesSelectionBox
             print(command)
-            command2 = "docker cp " + DockerID + ":"+DOCKERLOGFILE + "/data.json " + TESTRESULT + ReprotID + "/" + JobName1 + "/data.json"
+            command2 = "docker cp " + DockerID + ":"+DOCKERLOGFILE + "/data.json " + TESTRESULT + ReprotID + "/" + JobName1 + "/data.json"# 从docker上复制/LogDir/data.json  到 /TestResult/83/testAutomaticallyMatchesSelectionBox/data.json
             print(command2)
-            ServerCommand(command2)
+            ServerCommand(command2) # 执行命令
             ServerCommand(command)
-
         except:
-            pass
+            try:
+                #如果脚本运行不正常设置为脚本运行失败
+                dataJson = SystemTool.readJson(os.path.join(SystemTool.getRootDirectory(),ConstantVar.DataTemplate)) # 读取data.json模板
+                dataJson["start"] = str(starttime) # 设置开始时间
+                dataJson["script"] = os.path.join(ConstantVar.TestCasePath,JobName1 + ConstantVar.Air)  # 往data.json  中script 设置当前运行用例.air路径
+                dataJson["tests"] = {ADBRemoteConnectionAddress:{"status": 2,"path": os.path.join(SystemTool.getRootDirectory(),ConstantVar.TestCasePath,JobName,ConstantVar.Log,ADBAddress,ConstantVar.LogHtml)}}  # 设置tests字典中的值
+                str_json = Transition.DictionaryTurnJsonSerialize(dataJson)  # 字典转json
+                SystemTool.writeOutJsonNoLock(str_json, os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson), "覆盖")  # 写出data.json到临时文件
+                command3 = "sshpass -p 'root' scp -r " + os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson) + ' root@10.30.20.99:/TestResult/' + os.path.join(ReprotID,JobName1) # 将data.json复制到99机器的 /TestResult/82/用例下
+                ServerCommand(command3, IP=SERVERIP2)
+            except  Exception as e:
+                SystemTool.anomalyRaise(e, "根据模板生成data.json失败")  # 打印异常
 
     def getResultToServer(self, ReprotID):
         """复制结果到服务器"""

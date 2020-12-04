@@ -55,13 +55,13 @@ def installPKG():
 
             install(APK, replace=False, install_options=["-g"])  # 正确的
             print(G.DEVICE.uuid,":安装成功")
+            SuccessfulDevWriter()
         except:
             try:
                 print("第一种方式安装失败，尝试使用第二种安装方式")
                 BaseURL=ATXPROVIDER_URL+UUID
                 print(downloadPath)
                 stu = {"url": downloadPath,"launch":True}
-
                 hearder = {
                     'Cookie': userid,
                 }
@@ -70,17 +70,11 @@ def installPKG():
                 RequestReprot=Result.json()
                 if RequestReprot["success"]==True:
                     print(G.DEVICE.uuid, ":安装成功")
-                else:
-                    print(G.DEVICE.uuid, ":安装失败")
-                    with open(DEVICEINFO, encoding='utf8') as f:
-                        json_data = json.load(f)
-                        e1 = json_data.pop(G.DEVICE.uuid)
-                        with open(DEVICEINFO, "w") as f:
-                            json.dump(e1, f)
-                        log(G.DEVICE.uuid, "设备移除成功！")
-
+                    SuccessfulDevWriter()
             except:
                     pass
+
+
 
 
 
@@ -91,6 +85,7 @@ def installPKG():
         try:
             install(APK, replace=False, install_options=["-g"])  # 正确的
             log(G.DEVICE.uuid,":安装成功")
+            SuccessfulDevWriter()
         except:
             try:
                 print("第一种方式安装失败，尝试使用第二种安装方式")
@@ -105,6 +100,7 @@ def installPKG():
                 RequestReprot=Result.json()
                 if RequestReprot["success"]==True:
                     print(G.DEVICE.uuid, ":安装成功")
+                    SuccessfulDevWriter()
                 else:
                     with open(DEVICEINFO, encoding='utf-8') as f:
                         json_data = json.load(f)
@@ -121,8 +117,16 @@ def installPKG():
                     with open(DEVICEINFO, "w") as f:
                         json.dump(e1, f)
                     log(G.DEVICE.uuid,"设备移除成功！")
-        print("安装成功")
 
+
+def SuccessfulDevWriter():
+    with open(SuccessfulDevices, "r", encoding="utf-8") as f:
+        SuccessfulDev = json.load(f)
+        newdata = {G.DEVICE.uuid: IPgetUUID(G.DEVICE.uuid)}
+        SuccessfulDev.update(newdata)
+    with open(SuccessfulDevices, "w", encoding="utf-8") as f:
+        json.dump(SuccessfulDev, f)
+    print("可用设备写入成功")
 
 
 UUID = IPgetUUID(G.DEVICE.uuid)

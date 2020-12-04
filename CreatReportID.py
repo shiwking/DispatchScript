@@ -1,6 +1,6 @@
 import re
 import pymysql
-from Setting import *
+from SettingInfo import *
 def readReportID():
     """插入汇总用例结果"""
     # 建立数据库连接

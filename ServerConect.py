@@ -1,4 +1,4 @@
-from Setting import *
+from SettingInfo import *
 import paramiko
 import pymysql
 import re

@@ -1,12 +1,11 @@
 TESTRESULT='/TestResult/'
 import time
 from  ServerConect import *
-from  CreatReportID import readReportID
+import json
 TestResult = []
 class Reprot(object):
     def  __int__(self):
-        pass
-
+        self.time = []
 
     def ReadReport(self,readReportID):
         import os
@@ -32,20 +31,24 @@ class Reprot(object):
                             status = "Pass"
                         else:
                             status = "Fail"
-                        runtime="%.3f" % (time.time() - json_data['start']),
                         FilePath = Path+"/"+TestCase+"/"+TestCase+".log/log.html"
                         print(FilePath)
                         devlist.append(DevName)
                     TestCaseResult = {'scriptName': TestCase, 'status': status, "path": FilePath, "createtime": createtime,
-                                      "device": devlist[0],"runtime":runtime}
-
+                                      "device": devlist[0]}
                     print(TestCaseResult)
                     TestResult.append(TestCaseResult)
             except:
                 pass
+    def ReadDevinfo(self,devIP):
 
+        DEVICEINFO = "/var/jenkins_home/deviceInfo.json"
+        with open(DEVICEINFO, 'r') as load_f:
+            load_dict = json.load(load_f)
+        devuuid= load_dict[devIP]
+        return devuuid
 
-    def WiterReprot(self):
+    def WiterReprot(self,ReportID,runtime):
         print("开始写入汇总结果")
         TestScripNum =len(TestResult)
         print(TestScripNum)
@@ -65,32 +68,34 @@ class Reprot(object):
         FailNum  = len(faillist)
         SkiplNum = len(skiplist)
         AllNum=PassNum+FailNum+SkiplNum
-        localtime1 = time.localtime(float(self.time[0]))
+        localtime1 = time.localtime(time.time())
         localtime = time.strftime("%Y_%m_%d_%H_%M_%S", localtime1)
         testName='AutoTest'+(str(localtime))
-        Allruntime=str(int((self.time[1]-self.time[0])/60))
         isDelete=0
-        insert_db_Summary(testName,AllNum,PassNum,FailNum,SkiplNum,Allruntime,localtime,isDelete)
+        insert_db_Summary(testName,AllNum,PassNum,FailNum,SkiplNum,runtime,localtime,isDelete)
         print("报告汇总结果写入成功")
-
         print("开始写入用例测试结果")
         testid = 0
-        for caseResult in self.TestReSult:
+        for caseResult in TestResult:
             caseName=caseResult['scriptName']
-            runtime=caseResult['runtime']
+            runtime="30"
             logoinfo=caseResult['path']
             createtime=caseResult['createtime']
             teststatus=caseResult['status']
             isDelete=0
             testresult_id =SearchTestID(testName)
-            ReportID = readReportID()
             testDevice=caseResult['device']
-            print(testid,caseName,runtime,logoinfo,createtime,teststatus,isDelete,testresult_id,ReportID,testDevice)
-            insert_db(testid,caseName,runtime,logoinfo,createtime,teststatus,isDelete,testresult_id,ReportID,testDevice)
+            DevUUID=self.ReadDevinfo(testDevice)
+            print(testid,caseName,runtime,logoinfo,createtime,teststatus,isDelete,testresult_id,ReportID,DevUUID)
+            insert_db(testid,caseName,runtime,logoinfo,createtime,teststatus,isDelete,testresult_id,ReportID,DevUUID)
             testid=testid+1
 
 if __name__ == '__main__':
+    import sys
+    Commad = sys.argv
+    ReportID = Commad[1]
+    runtime=Commad[2]
     RS=Reprot()
-    RS.ReadReport("219")
+    RS.ReadReport(ReportID)
     print("开始写入数据")
-    RS.WiterReprot()
+    RS.WiterReprot(ReportID,runtime)

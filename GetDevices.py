@@ -1,10 +1,10 @@
 import requests
 import json
-from Setting import *
+from SettingInfo import *
 class ConnectATX(object):
     def __init__(self):
         self.BaseURL="http://10.30.20.29:4000/"
-        self.userid='user_id="2|1:0|10:1603520841|7:user_id|32:c2hpd2tpbmdAYW5vbnltb3VzLmNvbQ==|cc78f84418a6cb723a546d64b1145fc7bdf0f12294806e95deb91e1227aa46da"; Path=/; Domain=10.30.20.29; Expires=Fri, 23 Oct 2020 06:13:43 GMT;'
+        self.userid=userid
         self.DevUUIDList=[]
         self.devIPList=[]
         self.devInfo= {}
@@ -19,12 +19,9 @@ class ConnectATX(object):
         hearder={
             'Cookie': self.userid,
         }
-
         r = requests.get(URL,headers=hearder)
         reprot=r.json()
         print(reprot)
-
-
         for  deviceinfo  in reprot['devices']:
             if deviceinfo['present']==True and deviceinfo['using']==False:
                 devUUID=deviceinfo['udid']
@@ -35,21 +32,18 @@ class ConnectATX(object):
                 requests.post(URL2, headers=hearder,data=devdata) #使用该设备
                 getUsingDevinfo=requests.get(URL2+'/'+devUUID, headers=hearder) #获取使用设备的UUID
                 getDevideInfo = getUsingDevinfo.json()['device']["sources"]
-
                 for devinfo in getDevideInfo.keys():
                     devip=getDevideInfo[devinfo]['remoteConnectAddress']
                     self.devIPList.append(devip)
                     self.devInfo[devip]=devUUID
-
-
         with open(DEVICEINFO, "w") as f:
             json.dump(self.devInfo, f)
-
-        if   len(self.devIPList)==0:
-            print("设备数量为空")
-            return None
+        if len(self.devIPList) == 0:
+            print("设备数量为空,程序退出")
+            import sys
+            sys.exit(0)
         else:
-            print("返回设备数量：",len(self.devIPList))
+            print("返回设备数量：", len(self.devIPList))
             return self.devIPList
 
     def releaseDevice(self):

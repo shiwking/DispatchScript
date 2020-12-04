@@ -5,12 +5,13 @@ import traceback
 import subprocess
 import webbrowser
 import time
+import platform
 import json
 import shutil
 from airtest.core.android.adb import ADB
 from jinja2 import Environment, FileSystemLoader
 from GetDevices import ConnectATX
-
+curPath = os.path.abspath(os.path.dirname(__file__))
 def run(devices, air, run_all=False):
     """"
         run_all
@@ -36,21 +37,37 @@ def run_on_multi_device(devices, air, results, run_all):
         Run airtest on multi-device
     """
     tasks = []
+    cmd = []
     for dev in devices:
         if (not run_all and results['tests'].get(dev) and
            results['tests'].get(dev).get('status') == 0):
             print("Skip device %s" % dev)
             continue
         log_dir = get_log_dir(dev, air)
-        cmd = [
-            "airtest",
-            "run",
-            air,
-            "--device",
-            "Android:///" + dev,
-            "--log",
-            log_dir
-        ]
+        if platform.system().lower() == "windows":  # 判断当前运行环境为windows时
+            cmd = [
+                "python",
+                "-m",
+                "airtest",
+                "run",
+                air,
+                "--device",
+                "Android:///" + dev,
+                "--log",
+                log_dir
+            ]
+        elif platform.system().lower() == "linux":  # 判断当前运行环境为linux时
+            cmd = [
+                # "python3", # 上传前注释
+                # "-m", # 上传前注释
+                "airtest",
+                "run",
+                air,
+                "--device",
+                "Android:///" + dev,
+                "--log",
+                log_dir
+            ]
         try:
             tasks.append({
                 'process': subprocess.Popen(cmd, cwd=os.getcwd()),
@@ -67,21 +84,39 @@ def run_one_report(air, dev):
         生成一个脚本的测试报告
         Build one test report for one air script
     """
+    cmd = []
     try:
         log_dir = get_log_dir(dev, air)
         log = os.path.join(log_dir, 'log.txt')
         if os.path.isfile(log):
-            cmd = [
-                "airtest",
-                "report",
-                air,
-                "--log_root",
-                log_dir,
-                "--outfile",
-                os.path.join(log_dir, 'log.html'),
-                "--lang",
-                "zh"
-            ]
+            if platform.system().lower() == "windows":  # 判断当前运行环境为windows时
+                cmd = [
+                    "python",
+                    "-m",
+                    "airtest",
+                    "report",
+                    air,
+                    "--log_root",
+                    log_dir,
+                    "--outfile",
+                    os.path.join(log_dir, 'log.html'),
+                    "--lang",
+                    "zh"
+                ]
+            elif platform.system().lower() == "linux":  # 判断当前运行环境为linux时
+                cmd = [
+                    # "python3", # 上传前注释
+                    # "-m", # 上传前注释
+                    "airtest",
+                    "report",
+                    air,
+                    "--log_root",
+                    log_dir,
+                    "--outfile",
+                    os.path.join(log_dir, 'log.html'),
+                    "--lang",
+                    "zh"
+                ]
             ret = subprocess.call(cmd, shell=True, cwd=os.getcwd())
             return {
                     'status': ret,
@@ -170,18 +205,19 @@ if __name__ == '__main__':
     """
     #获取设备
 
-    import sys
-    Commad = sys.argv
-    print(f"Commad:{Commad}")
-    TestAPKName = Commad[1]
-    print(TestAPKName)
-    platform = [Commad[2]]
-    print(platform)
-    environment = [Commad[3]]
-    print(environment)
-    ConnectATX=ConnectATX()
-    devices = ConnectATX.getDevicesIP()
-    print(devices)
+    # import sys
+    # Commad = sys.argv
+    # print(f"Commad:{Commad}")
+    # TestAPKName = Commad[1]
+    # print(TestAPKName)
+    # platform = [Commad[2]]
+    # print(platform)
+    # environment = [Commad[3]]
+    # print(environment)
+    # ConnectATX=ConnectATX()
+    # devices = ConnectATX.getDevicesIP()
+    # print(devices)
     air = 'installPKG.air'
+    devices=['10.30.20.29:21475']
     run(devices, air, run_all=True)
-    ConnectATX.releaseDevice()
+    # ConnectATX.releaseDevice()
