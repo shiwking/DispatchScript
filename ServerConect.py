@@ -13,7 +13,7 @@ def ServerCommand(command,IP=SERVERIP,port=PORT,username=USERNAME,passwrod=PASSW
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(IP,port,username,passwrod) #链接服务器
+    ssh.connect(IP,port,username,passwrod,allow_agent=False,look_for_keys=False) #链接服务器
     stdin, stdout, stderr = ssh.exec_command(command)   #输入命令行
     return  stdout.read().decode('utf-8')
 
@@ -31,7 +31,7 @@ def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, pas
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(ip, port, user, password)
+    ssh.connect(ip, port, user, password,allow_agent=False,look_for_keys=False)
     sftp = ssh.open_sftp()
     sftp.put(local_file, remote_file)
     print("脚本上传成功")
@@ -42,7 +42,7 @@ def RemoteScp(ReprotID,local_file=LOCALLOGFILES, ip=SERVERIP, port=PORT, user=US
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(ip, port, user, password)
+    ssh.connect(ip, port, user, password,allow_agent=False,look_for_keys=False)
     sftp = ssh.open_sftp()
     remote_file = TESTRESULT + ReprotID + "/"
     CaseNames=sftp.listdir(remote_file)
