@@ -11,11 +11,14 @@ def ServerCommand(command,IP=SERVERIP,port=PORT,username=USERNAME,passwrod=PASSW
     :param user: 用户名
     :param password: 用户密码
     """
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(IP,port,username,passwrod,allow_agent=False,look_for_keys=False) #链接服务器
-    stdin, stdout, stderr = ssh.exec_command(command)   #输入命令行
-    return  stdout.read().decode('utf-8')
+    ssh = paramiko.SSHClient()#绑定一个实例
+    ssh.load_system_host_keys()#加载known_hosts文件
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())#远程连接如果提示yes/no时，默认为yes
+    ssh.connect(IP,port,username,passwrod,allow_agent=False,look_for_keys=False) #连接远程主机
+    stdin, stdout, stderr = ssh.exec_command(command)   #执行指令，并将命令本身及命令的执行结果赋值到标准办入、标准输出或者标准错误
+    cmd_result = stdout.read().decode('utf-8') #取得执行的输出
+    ssh.close()
+    return  cmd_result
 
 def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, password=PASSWORD ):
 
@@ -29,9 +32,10 @@ def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, pas
     :return:
     """
 
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(ip, port, user, password,allow_agent=False,look_for_keys=False)
+    ssh = paramiko.SSHClient()#绑定一个实例
+    ssh.load_system_host_keys()  # 加载known_hosts文件
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())#远程连接如果提示yes/no时，默认为yes
+    ssh.connect(ip, port, user, password,allow_agent=False,look_for_keys=False)#连接远程主机
     sftp = ssh.open_sftp()
     sftp.put(local_file, remote_file)
     print("脚本上传成功")
@@ -40,9 +44,10 @@ def RemoteScp(ReprotID,local_file=LOCALLOGFILES, ip=SERVERIP, port=PORT, user=US
     """获取服务器上的运行结果存储到本地上"""
     print("开始下载文件到本地")
 
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(ip, port, user, password,allow_agent=False,look_for_keys=False)
+    ssh = paramiko.SSHClient()#绑定一个实例
+    ssh.load_system_host_keys()  # 加载known_hosts文件
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())#远程连接如果提示yes/no时，默认为yes
+    ssh.connect(ip, port, user, password,allow_agent=False,look_for_keys=False)#连接远程主机
     sftp = ssh.open_sftp()
     remote_file = TESTRESULT + ReprotID + "/"
     CaseNames=sftp.listdir(remote_file)
