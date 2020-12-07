@@ -1,15 +1,12 @@
 # -*- encoding=utf8 -*-
 import platform
 import sys
-
-from airtest.core.api import connect_device
-
 from  run  import run
 from GetDevices import ConnectATX
 import wget
 import json
 from SettingInfo import *
-
+from airtest.core.api import *
 
 
 class  InstallPKG(object):
@@ -22,7 +19,7 @@ class  InstallPKG(object):
         getDevicesIP ：获取当前可用设备IP ，写入JsonFile
         """
         if platform.system().lower() == "windows":  # 判断当前运行环境为windows时
-            self.TestAPKName = "first-test_P459_release_v32_0.32.1-1001_F2_27b158c7_e262f0fa7_26b96d031_d41bb5364_7b6db728_89dbfa1.apk"  # APK title
+            self.TestAPKName = "first-test_S929_release_v32_0.32.1-1001_F2_6c327865_010fa2c61_95212a329_a89856d1e_1ac964a54_35ada48.apk"  # APK title
             self.deviceCategory = ["Android"]  # Android或IOS
             self.environment = ["Release"]  # 环境    Release或Develop
         elif platform.system().lower() == "linux":  # 判断当前运行环境为linux时
@@ -90,6 +87,12 @@ class  InstallPKG(object):
             devices=["7056efbb"]
         elif platform.system().lower() == "linux":  # 判断当前运行环境为linux时
             devices=self.Devinfo()
+        for dev in devices:
+            try:
+                connect_device("Android://127.0.0.1:5037/"+dev)
+                print(dev,"链接成功！")
+            except:
+                print("ACK")
         run(devices, air, run_all=True)
 
     def remoAPK(self):
