@@ -11,6 +11,7 @@ sys.path.extend(syspath)
 import json
 import requests
 from airtest.core.api import *
+from poco.drivers.unity3d import UnityPoco
 from SettingInfo import *
 
 auto_setup(__file__)
@@ -130,6 +131,16 @@ def SuccessfulDevWriter():
 
 
 UUID = IPgetUUID(G.DEVICE.uuid)
-installPKG()
-start_app(PKG)
-
+installPKG() # 安装包
+start_app(PKG) # 启动游戏
+time.sleep(18)
+poco = UnityPoco()
+poco.wait_for_any([poco("BtnLogin")], timeout=18)  # 等待登录按钮显示元素
+time.sleep(2)
+poco("BtnServerList").click() # 点击服务器列表
+print(f"[{UUID}]切换自动化服务器成功")
+poco.wait_for_any([poco("Title")], timeout=10)  # 等待标题元素显示
+time.sleep(2)
+poco(text="auto-test1").click() # 点击服务器
+time.sleep(3)
+stop_app(PKG)
