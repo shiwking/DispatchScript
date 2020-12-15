@@ -2,9 +2,6 @@ __author__ = "shiwking"
 # 安装包
 import os
 import sys
-
-from Utils.Tool.SystemTool import SystemTool
-
 rootpath = str("/" + os.path.join("var", "jenkins_home","DispatchScript"))
 syspath = sys.path
 # sys.path = []
@@ -16,6 +13,7 @@ import requests
 from airtest.core.api import *
 from poco.drivers.unity3d import UnityPoco
 from SettingInfo import *
+from Utils.Tool.SystemTool import SystemTool
 
 auto_setup(__file__)
 PWD = os.path.dirname(__file__)
