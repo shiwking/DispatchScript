@@ -2,9 +2,12 @@ __author__ = "shiwking"
 # 安装包
 import os
 import sys
+
+from Utils.Tool.SystemTool import SystemTool
+
 rootpath = str("/" + os.path.join("var", "jenkins_home","DispatchScript"))
 syspath = sys.path
-sys.path = []
+# sys.path = []
 sys.path.append(rootpath)  # 将工程根目录加入到python搜索路径中
 sys.path.extend([rootpath + i for i in os.listdir(rootpath) if i[0] != "."])  # 将工程目录下的一级目录添加到python搜索路径中
 sys.path.extend(syspath)
@@ -129,18 +132,27 @@ def SuccessfulDevWriter():
         json.dump(SuccessfulDev, f)
     print("可用设备写入成功")
 
+def switchServer(UUID):
+    """
+    切换服务器
+    param UUID: 设备ID
+    """
+    try:
+        start_app(PKG)  # 启动游戏
+        time.sleep(25)
+        poco = UnityPoco()
+        poco.wait_for_any([poco("BtnLogin")], timeout=35)  # 等待登录按钮显示元素
+        time.sleep(2)
+        poco("BtnServerList").click()  # 点击服务器列表
+        print(f"[{UUID}]切换自动化服务器成功")
+        poco.wait_for_any([poco("Title")], timeout=20)  # 等待标题元素显示
+        time.sleep(2)
+        poco(text="auto-test1").click()  # 点击服务器
+        time.sleep(3)
+        stop_app(PKG) # 关闭游戏
+    except  Exception as e:
+        SystemTool.rerun(switchServer, e, f"切换服务器", UUID)  # 重新运行
 
 UUID = IPgetUUID(G.DEVICE.uuid)
 installPKG() # 安装包
-start_app(PKG) # 启动游戏
-time.sleep(18)
-poco = UnityPoco()
-poco.wait_for_any([poco("BtnLogin")], timeout=18)  # 等待登录按钮显示元素
-time.sleep(2)
-poco("BtnServerList").click() # 点击服务器列表
-print(f"[{UUID}]切换自动化服务器成功")
-poco.wait_for_any([poco("Title")], timeout=10)  # 等待标题元素显示
-time.sleep(2)
-poco(text="auto-test1").click() # 点击服务器
-time.sleep(3)
-stop_app(PKG)
+switchServer(UUID) # 切换服务器

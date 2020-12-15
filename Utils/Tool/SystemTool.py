@@ -13,7 +13,10 @@ import logging
 import platform
 from Utils.Constant.ConstantVar import ConstantVar
 # 系统工具类
-class SystemTool():
+from Utils.Tool.Kernel import Kernel
+
+
+class SystemTool(Kernel):
 
     @staticmethod
     def anomalyRaise(e, message):
@@ -110,3 +113,21 @@ class SystemTool():
                     fp.write(json)
         except  Exception as e:
             SystemTool.anomalyRaise(e, "写出json到指定文件（无锁）时异常")  # 打印异常
+
+    @staticmethod
+    def rerun(fun, e, exceptionMessage, *args):
+        """
+        重新运行
+        param fun: 函数
+        param e: 异常
+        param exceptionMessage: 异常信息
+        param args: 重新运行函数所需的参数
+        """
+        print(f"重新运行[{fun} {exceptionMessage}] {Kernel.AbnormalRerun + 1}次")
+        if (Kernel.AbnormalRerun < 2):  # 如果异常重运行次数小于2就重新执行
+            Kernel.AbnormalRerun = Kernel.AbnormalRerun + 1  # 异常重运行次数
+            fun(*args)  # 重新运行函数
+            Kernel.AbnormalRerun = 0  # 重置异常重运行次数
+        else:
+            Kernel.AbnormalRerun = 0  # 重置异常重运行次数
+            SystemTool.anomalyRaise(e, exceptionMessage + "时异常")  # 打印异常
