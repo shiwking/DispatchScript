@@ -19,7 +19,7 @@ class  InstallPKG(object):
         getDevicesIP ：获取当前可用设备IP ，写入JsonFile
         """
         if platform.system().lower() == "windows":  # 判断当前运行环境为windows时
-            self.TestAPKName = "first-test_S929_release_v32_0.32.1-1001_F2_6c327865_010fa2c61_95212a329_a89856d1e_1ac964a54_35ada48.apk"  # APK title
+            self.TestAPKName = "first-test_S979_release_v32_0.32.2-1002_F2_5594231b_d04ea3845_5d589ead6_138f3a743_01aeb2f9c_e77d55e.apk"  # APK title
             self.deviceCategory = ["Android"]  # Android或IOS
             self.environment = ["Release"]  # 环境    Release或Develop
         elif platform.system().lower() == "linux":  # 判断当前运行环境为linux时

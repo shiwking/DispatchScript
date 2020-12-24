@@ -1,6 +1,7 @@
 import requests
 import json
 from SettingInfo import *
+from Utils.Tool.SystemTool import SystemTool
 class ConnectATX(object):
     def __init__(self):
         self.BaseURL="http://10.30.20.29:4000/"
@@ -53,13 +54,13 @@ class ConnectATX(object):
             'Cookie': self.userid,
         }
         URL = self.BaseURL + 'api/v1/user/devices/'
-        print(URL)
-        for devUUID in self.DevUUIDList:
-            Result=requests.delete(URL+devUUID, headers=hearder)
+        json_data = SystemTool.readJson(DEVICEINFO) # 读取 deviceInfo.json
+        for key,serialNo in json_data.items():
+            Result=requests.delete(URL + serialNo, headers=hearder)
             if Result.json()['success']==True:
-                print(devUUID,"ATX设备释放成功！")
+                print(serialNo,"ATX设备释放成功！")
             else:
-                print(devUUID,"ATX设备释放失败！")
+                print(serialNo,"ATX设备释放失败！")
 
     def idleTimeout(self,udid):
         """

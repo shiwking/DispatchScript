@@ -138,6 +138,6 @@ if __name__ == '__main__':
     DS.AutoConfig()
     from GetDevices import ConnectATX
     ATX = ConnectATX()
-    ATX.releaseDevice()
+    ATX.releaseDevice() # 释放设备
 
 
