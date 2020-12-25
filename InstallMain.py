@@ -40,9 +40,9 @@ class  InstallPKG(object):
 
         """步骤2.开始Download APK文件"""
         BaseURL = None
-        if(ConstantVar.FirstTake in self.environment[0]): # 如果当前选中环境包含  “先行服”
+        if(ConstantVar.Release in self.environment[0]): # 如果当前选中环境包含  “Release”
             BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/先行/"
-        elif((ConstantVar.DevTake in self.environment[0])):# 如果当前选中环境包含  “开发服”
+        elif((ConstantVar.Develop in self.environment[0])):# 如果当前选中环境包含  “Develop”
             BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/开发/"
         url=os.path.join(BaseURL,self.TestAPKName)
         return url
@@ -54,9 +54,9 @@ class  InstallPKG(object):
         PKG = None # 包
         jsonFile=os.path.join(outpath,"config.json")
         APKPath=os.path.join(outpath,self.TestAPKName)
-        if (ConstantVar.FirstTake in self.environment[0]):  # 如果当前选中环境包含  “先行服”
+        if (ConstantVar.Release in self.environment[0]):  # 如果当前选中环境包含  “Release”
             PKG = "com.sofunny.chickendinnerfirst"
-        elif ((ConstantVar.DevTake in self.environment[0])):  # 如果当前选中环境包含  “开发服”
+        elif ((ConstantVar.Develop in self.environment[0])):  # 如果当前选中环境包含  “Develop”
             PKG = "com.sofunny.ChickenDEV"
         new_dict={
             "APKPath":APKPath,

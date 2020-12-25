@@ -43,3 +43,5 @@ class ConstantVar():
         """状态"""
         FirstTake = "先行服"
         DevTake = "开发服"
+        Develop = "Develop" # 开发服
+        Release = "Release" # 先行服
