@@ -40,5 +40,6 @@ class ConstantVar():
         Py = ".py"
         Air = ".air"
         Html = ".html"
-
-
+        """状态"""
+        FirstTake = "先行服"
+        DevTake = "开发服"

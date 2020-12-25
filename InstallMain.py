@@ -7,6 +7,7 @@ import wget
 import json
 from SettingInfo import *
 from airtest.core.api import *
+from Utils.Constant.ConstantVar import ConstantVar
 
 
 class  InstallPKG(object):
@@ -38,10 +39,11 @@ class  InstallPKG(object):
     def DownURL(self):
 
         """步骤2.开始Download APK文件"""
-        if self.environment[0] =="Develop":
-            BaseURL="http://soft.f.xmfunny.com:8888/sausage/apk/开发/"
-        else:
+        BaseURL = None
+        if(ConstantVar.FirstTake in self.environment[0]): # 如果当前选中环境包含  “先行服”
             BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/先行/"
+        elif((ConstantVar.DevTake in self.environment[0])):# 如果当前选中环境包含  “开发服”
+            BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/开发/"
         url=os.path.join(BaseURL,self.TestAPKName)
         return url
 
@@ -49,12 +51,13 @@ class  InstallPKG(object):
         """
         步骤3.写入运行环境配置文件
         """
+        PKG = None # 包
         jsonFile=os.path.join(outpath,"config.json")
         APKPath=os.path.join(outpath,self.TestAPKName)
-        if self.environment[0] == "Develop":
-            PKG = "com.sofunny.ChickenDEV"
-        else:
+        if (ConstantVar.FirstTake in self.environment[0]):  # 如果当前选中环境包含  “先行服”
             PKG = "com.sofunny.chickendinnerfirst"
+        elif ((ConstantVar.DevTake in self.environment[0])):  # 如果当前选中环境包含  “开发服”
+            PKG = "com.sofunny.ChickenDEV"
         new_dict={
             "APKPath":APKPath,
             "PKG":PKG,
