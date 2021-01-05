@@ -8,7 +8,7 @@ from Utils.Tool.Transition import Transition
 from Utils.Constant.ConstantVar import ConstantVar
 class DockerOperation(object):
     def __init__(self):
-        self.client = docker.DockerClient(base_url=DOCKERBASEURL)
+        self.client = docker.DockerClient(base_url=DOCKERBASEURL) # tcp://10.30.20.99:2375     远程99
         self.DockerList=[]
 
 
@@ -23,12 +23,17 @@ class DockerOperation(object):
         return cls
 
     def Runcontainers(self,JobName,DevName,JobClass=SCRIPTFILEPATH):
-        """运行一个容器"""
+        """
+        运行一个99机器上容器 运行用例
+        JobName： 用例名.air
+        DevName ：设备序列号
+        JobClass：/Muilt/Muilt/testflow/scripts/TestCase/
+        """
         JobName=JobName+"  "
         DevName=DevName+"  "
         Commd="python3  run.py "+JobClass+JobName+DevName
-        volume = {"/Muilt": {"bind": "/Muilt", "mode": "rw"}}
-        container = self.client.containers.run('airtest',Commd,volumes=volume,detach=True)
+        volume = {"/Muilt": {"bind": "/Muilt", "mode": "rw"}} # volume：容器卷 意思是使用airtest镜像启动一个容器，将宿主机上的/Muilt复制一份到容器中 可读可写
+        container = self.client.containers.run('airtest',Commd,volumes=volume,detach=True) # 调用99号机上run方法    airtest：99号几上镜像名 Commd：run方法所需参数 volume：容器卷 意思是使用airtest镜像启动一个容器，将宿主机上的/Muilt复制一份到容器中 可读可写
         self.DockerList.append(container.short_id)
         return container.short_id
 
@@ -69,6 +74,7 @@ class DockerOperation(object):
             print(command2)
             ServerCommand(command2) # 执行命令
             ServerCommand(command)
+            self.setDockerID(ReprotID,JobName1,DockerID) # 设置dockerID
         except:
             try:
                 #如果脚本运行不正常设置为脚本运行失败
@@ -82,6 +88,22 @@ class DockerOperation(object):
                 ServerCommand(command3, IP=SERVERIP2)
             except  Exception as e:
                 SystemTool.anomalyRaise(e, "根据模板生成data.json失败")  # 打印异常
+
+    def setDockerID(self,ReprotID,JobName1,DockerID):
+        '''
+        设置dockerID
+        param ReprotID: 例如：83
+        param JobName1:用例名
+        param DockerID:dockerID
+        return   :
+        '''
+        try:
+            configPath = TESTRESULT + ReprotID + "/" + JobName1 + "/" + ConstantVar.ConfigIni
+            SystemTool.copyFile(os.path.join(SystemTool.getRootDirectory(), ConstantVar.ConfigIniTemplate), configPath)  # 复制Config.ini模板 到/TestResult/83/testAutomaticallyMatchesSelectionBox/Config.ini
+            config = SystemTool.readingIniConfiguration(configPath)  # 获取闪退 设备Config.ini配置文件对象
+            SystemTool.setOnRegionAndKey(config, configPath, ConstantVar.DataArea, ConstantVar.DockerIDKey, DockerID)  # 根据.ini文件的区域和key设置值
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"设置dockerID时异常")  # 打印异常
 
     def getResultToServer(self, ReprotID):
         """复制结果到服务器"""

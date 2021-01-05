@@ -1,5 +1,6 @@
 
 import yaml
+import docker
 from DockerOperation import *
 from CreatReportID import *
 import time
@@ -15,6 +16,7 @@ class DistributeScripts(object):
         # self.ATX.getDevicesIP() # 获取连接的设备id
         self.TestReSult=[]
         self.time= []
+        self.client = docker.DockerClient(base_url=DOCKERBASEURL)  # tcp://10.30.20.99:2375     远程99
 
 
     def getDevice(self):

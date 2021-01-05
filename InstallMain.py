@@ -1,13 +1,14 @@
 # -*- encoding=utf8 -*-
 import platform
 import sys
-from  run  import run
-from GetDevices import ConnectATX
 import wget
 import json
 from SettingInfo import *
 from airtest.core.api import *
 from Utils.Constant.ConstantVar import ConstantVar
+from Utils.Tool.SystemTool import SystemTool
+from  run  import run
+from GetDevices import ConnectATX
 
 
 class  InstallPKG(object):
@@ -20,17 +21,17 @@ class  InstallPKG(object):
         getDevicesIP ：获取当前可用设备IP ，写入JsonFile
         """
         if platform.system().lower() == "windows":  # 判断当前运行环境为windows时
-            self.TestAPKName = "first-test_S979_release_v32_0.32.2-1002_F2_5594231b_d04ea3845_5d589ead6_138f3a743_01aeb2f9c_e77d55e.apk"  # APK title
+            self.TestAPKName = "dev_P2325_develop_F2_87899736_8d58eeec6_1abc8c97a_1ef41e0c4_0be918ffd_0a9e863.apk"  # APK title
             self.deviceCategory = ["Android"]  # Android或IOS
-            self.environment = ["Release"]  # 环境    Release或Develop
+            self.environment = ["auto-test1Develop"]  # 环境    auto-test1Develop或auto-test2Release
         elif platform.system().lower() == "linux":  # 判断当前运行环境为linux时
             self.Commad=sys.argv  # 上传前解除注释
             self.TestAPKName = self.Commad[1] # 上传前解除注释
             self.platform=[self.Commad[2]] # 上传前解除注释
             self.environment=[self.Commad[3]] # 上传前解除注释
-            # self.TestAPKName = "first-test_P459_release_v32_0.32.1-1001_F2_27b158c7_e262f0fa7_26b96d031_d41bb5364_7b6db728_89dbfa1.apk"   # 上传前注释
+            # self.TestAPKName = "dev_P2325_develop_F2_87899736_8d58eeec6_1abc8c97a_1ef41e0c4_0be918ffd_0a9e863.apk"   # 上传前注释
             # self.deviceCategory = ["Android"]   # 上传前注释
-            # self.environment = ["Release"]   # 上传前注释
+            # self.environment = ["test1Develop"]   # 上传前注释
         self.ConnectATX = ConnectATX()
         self.ConnectATX.getDevicesIP()
         self.InitDevList()
@@ -44,6 +45,8 @@ class  InstallPKG(object):
             BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/先行/"
         elif((ConstantVar.Develop in self.environment[0])):# 如果当前选中环境包含  “Develop”
             BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/开发/"
+        config = SystemTool.readingIniConfiguration(ConstantVar.EnvironmentConfig)  # 获取 环境配置.ini配置文件对象
+        SystemTool.setOnRegionAndKey(config, ConstantVar.EnvironmentConfig, ConstantVar.DataArea, ConstantVar.Environment, self.environment[0])  # 根据.ini文件的区域和key设置值    设置所选环境
         url=os.path.join(BaseURL,self.TestAPKName)
         return url
 

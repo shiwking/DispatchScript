@@ -2,6 +2,9 @@ __author__ = "shiwking"
 # 安装包
 import os
 import sys
+
+
+
 rootpath = str("/" + os.path.join("var", "jenkins_home","DispatchScript"))
 syspath = sys.path
 # sys.path = []
@@ -14,6 +17,7 @@ from airtest.core.api import *
 from poco.drivers.unity3d import UnityPoco
 from SettingInfo import *
 from Utils.Tool.SystemTool import SystemTool
+from Utils.Constant.ConstantVar import ConstantVar
 
 auto_setup(__file__)
 PWD = os.path.dirname(__file__)
@@ -130,6 +134,22 @@ def SuccessfulDevWriter():
         json.dump(SuccessfulDev, f)
     print("可用设备写入成功")
 
+def AccessEnvironment():
+    """
+    获取环境服务器名称
+    param UUID: 设备ID
+    return environment:环境服务器名称
+    """
+    try:
+        config = SystemTool.readingIniConfiguration(ConstantVar.EnvironmentConfig)  # 获取 环境配置.ini配置文件对象
+        environment = SystemTool.getOnRegionAndKey(config, ConstantVar.DataArea, ConstantVar.Environment)  # 根据.ini文件的区域和key读取值   获取环境
+        environment = environment.replace(ConstantVar.Develop,"") # 消除末尾Develop
+        environment = environment.replace(ConstantVar.Release, "") # 消除末尾Release
+        return environment
+    except  Exception as e:
+        SystemTool.anomalyRaise(e, f"获取环境服务器名称时异常")  # 打印异常
+
+
 def switchServer(UUID):
     """
     切换服务器
@@ -145,7 +165,8 @@ def switchServer(UUID):
         print(f"[{UUID}]切换自动化服务器成功")
         poco.wait_for_any([poco("Title")], timeout=20)  # 等待标题元素显示
         time.sleep(2)
-        poco(text="auto-test1").click()  # 点击服务器
+        environment = AccessEnvironment() # 获取环境服务器名称
+        poco(text=environment).click()  # 点击服务器
         time.sleep(3)
         stop_app(PKG) # 关闭游戏
     except  Exception as e:

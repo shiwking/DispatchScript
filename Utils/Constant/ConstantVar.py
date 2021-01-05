@@ -25,6 +25,7 @@ class ConstantVar():
 
         """模板"""
         DataTemplate = os.path.join("Utils", "Template", "Json", "dataTemplate.json") # data.json模板
+        ConfigIniTemplate = os.path.join("Utils", "Template", "IniConfig", "Config.ini")  # Config.ini模板
 
         """文件路径及文件常量"""
         TestCasePath = os.path.join("Muilt", "Muilt", "testflow", "scripts","TestCase") # TestCase路径
@@ -45,3 +46,10 @@ class ConstantVar():
         DevTake = "开发服"
         Develop = "Develop" # 开发服
         Release = "Release" # 先行服
+
+        """.ini文件"""
+        ConfigIni = "Config.ini" # .ini配置文件
+        DataArea = "Data" #   Data区域
+        DockerIDKey = "DockerID" #   DockerID key
+        EnvironmentConfig = os.path.join("Utils", "IniConfig", "EnvironmentConfig.ini")  # 环境配置.ini
+        Environment = "Environment" # Environment key

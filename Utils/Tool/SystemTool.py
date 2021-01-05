@@ -13,6 +13,7 @@ import logging
 import platform
 from Utils.Constant.ConstantVar import ConstantVar
 # 系统工具类
+from Utils.Tool import MyConfigparser
 from Utils.Tool.Kernel import Kernel
 
 
@@ -131,3 +132,79 @@ class SystemTool(Kernel):
         else:
             Kernel.AbnormalRerun = 0  # 重置异常重运行次数
             SystemTool.anomalyRaise(e, exceptionMessage + "时异常")  # 打印异常
+
+    @staticmethod
+    def writeFile(path, content, way):
+        """
+       写出文件到指定路径
+       param path:地址
+       param content :内容
+       param way :写入方式
+       return ：
+       """
+        fh = None
+        try:
+            if (way == "覆盖"):
+                fh = open(path, 'w', encoding='utf-8')  # w，代表覆盖内容
+            elif (way == "追加"):
+                fh = open(path, 'a', encoding='utf-8')  # a，代表追加内容
+            fh.write(str(content))
+            fh.close()
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, "写出文件到指定路径时异常")  # 打印异常
+
+    @staticmethod
+    def copyFile(file_path, new_path):
+        """
+        复制文件
+        :param file_path:文件路径
+        :param new_path:文件复制到的路径
+        """
+        shutil.copy(file_path, new_path)  # 复制文件
+
+    @staticmethod
+    def readingIniConfiguration(path):
+        '''
+        获取.ini配置文件对象
+        param path:.ini文件路径
+        return   config:.ini文件对象
+        '''
+        try:
+            config = MyConfigparser.ConfigParser()
+            config.read(path)  # 读取临时配置.ini文件
+            return config
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"获取.ini配置文件对象时异常")  # 打印异常
+
+    @staticmethod
+    def getOnRegionAndKey(config, area, key):
+        '''
+        根据.ini文件的区域和key取值
+        param config:.ini配置文件对象
+        param area:区域
+        param key:唯一标识
+        return  value :值
+        '''
+        try:
+            value = config.get(area, key)
+            return value
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"根据.ini文件的区域和key取值时异常")  # 打印异常
+
+    @staticmethod
+    def setOnRegionAndKey(config, path, area, key, value):
+        '''
+        根据.ini文件的区域和key设置值
+        param config:.ini配置文件对象
+        param path:.ini文件路径
+        param area:区域
+        param key:唯一标识
+        param value:值
+        return   :
+        '''
+        try:
+            print(config, path, area, key, value)
+            config.set(area, key, value)
+            config.write(open(path, "w"))
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"根据.ini文件的区域和key设置值时异常")  # 打印异常
