@@ -1,5 +1,8 @@
+
+
 import docker
 import os
+import time
 from  ServerConect import *
 from CreatReportID import *
 from  time import sleep
@@ -22,7 +25,7 @@ class DockerOperation(object):
         cls=self.client.containers.list()
         return cls
 
-    def Runcontainers(self,JobName,DevName,JobClass=SCRIPTFILEPATH):
+    def Runcontainers(self,JobName,DevName,Environment,JobClass=SCRIPTFILEPATH):
         """
         运行一个99机器上容器 运行用例
         JobName： 用例名.air
@@ -31,7 +34,9 @@ class DockerOperation(object):
         """
         JobName=JobName+"  "
         DevName=DevName+"  "
-        Commd="python3  run.py "+JobClass+JobName+DevName
+        Environment = Environment + "  "
+        print("python3  run.py "+JobClass+JobName+DevName+Environment)
+        Commd="python3  run.py "+JobClass+JobName+DevName+Environment
         volume = {"/Muilt": {"bind": "/Muilt", "mode": "rw"}} # volume：容器卷 意思是使用airtest镜像启动一个容器，将宿主机上的/Muilt复制一份到容器中 可读可写
         container = self.client.containers.run('airtest',Commd,volumes=volume,detach=True) # 调用99号机上run方法    airtest：99号几上镜像名 Commd：run方法所需参数 volume：容器卷 意思是使用airtest镜像启动一个容器，将宿主机上的/Muilt复制一份到容器中 可读可写
         self.DockerList.append(container.short_id)
@@ -59,22 +64,23 @@ class DockerOperation(object):
         print("开始存储%s结果"%JobName)
         Job=JobName.split('.')
         JobName1=Job[0]
-        datatype=TESTRESULT + "/" +ReprotID
+        datatype=TESTRESULT + ReprotID
         #打包服务器上的日志文件
         ADBAddress = ADBRemoteConnectionAddress.replace(".","_") # 将ADB远程连接地址的“.” 替换为“_”
         ADBAddress = ADBAddress.replace(":", "_")  # 将ADB远程连接地址的“:” 替换为“_”
         try:
+            #
             sleep(5)
-            ServerCommand("mkdir  "+datatype) # 创建 /TestResult//82文件夹
-            ServerCommand("mkdir  " + datatype+"/ErrorLog") # 创建 /TestResult//82/ErrorLog'文件夹
-            ServerCommand("mkdir  " + datatype+"/"+JobName1)# 创建 /TestResult//82/testAutomaticallyMatchesSelectionBox文件夹
-            command = "docker cp " + DockerID + ":"+DOCKERLOGFILE+"/"+JobName1+'.log  ' + TESTRESULT + ReprotID + "/" + JobName1 # 从docker上复制/LogDir/testAutomaticallyMatchesSelectionBox.log  到/TestResult/83/testAutomaticallyMatchesSelectionBox
+            ServerCommand("mkdir  " + datatype) # 99创建 /TestResult/82文件夹
+            ServerCommand("mkdir  " + os.path.join(datatype,"ErrorLog")) # 99创建 /TestResult/82/ErrorLog'文件夹
+            ServerCommand("mkdir  " + os.path.join(datatype,JobName1))# 99创建 /TestResult/82/testAutomaticallyMatchesSelectionBox文件夹
+            command = "docker cp " + DockerID + ":" + os.path.join(DOCKERLOGFILE,JobName1+'.log')+ " " + os.path.join(datatype,JobName1) # 从docker上复制/LogDir/testAutomaticallyMatchesSelectionBox.log  到/TestResult/83/testAutomaticallyMatchesSelectionBox
             print(command)
-            command2 = "docker cp " + DockerID + ":"+DOCKERLOGFILE + "/data.json " + TESTRESULT + ReprotID + "/" + JobName1 + "/data.json"# 从docker上复制/LogDir/data.json  到 /TestResult/83/testAutomaticallyMatchesSelectionBox/data.json
+            command2 = "docker cp " + DockerID + ":" + os.path.join(DOCKERLOGFILE,"data.json") + " " + os.path.join(datatype,JobName1,"data.json")# 从docker上复制/LogDir/data.json  到 /TestResult/83/testAutomaticallyMatchesSelectionBox/data.json
             print(command2)
-            ServerCommand(command2) # 执行命令
-            ServerCommand(command)
-            self.setDockerID(ReprotID,JobName1,DockerID) # 设置dockerID
+            cmd_result2 = ServerCommand(command2) # 执行命令
+            cmd_result1 = ServerCommand(command)
+            self.setDockerID(ReprotID, JobName1, DockerID)  # 设置dockerID 到Config.ini
         except:
             try:
                 #如果脚本运行不正常设置为脚本运行失败
@@ -91,24 +97,26 @@ class DockerOperation(object):
 
     def setDockerID(self,ReprotID,JobName1,DockerID):
         '''
-        设置dockerID
+        设置dockerID 到Config.ini 例如：/TestResult/83/testAutomaticallyMatchesSelectionBox
         param ReprotID: 例如：83
         param JobName1:用例名
         param DockerID:dockerID
         return   :
         '''
         try:
-            configPath = TESTRESULT + ReprotID + "/" + JobName1 + "/" + ConstantVar.ConfigIni
+            SystemTool.thereIsNoCreationNotLock(os.path.join(TESTRESULT2,ReprotID,JobName1)) # 创建/TestResult/83/testAutomaticallyMatchesSelectionBox
+            configPath = os.path.join(TESTRESULT2,ReprotID,JobName1,ConstantVar.ConfigIni)
             SystemTool.copyFile(os.path.join(SystemTool.getRootDirectory(), ConstantVar.ConfigIniTemplate), configPath)  # 复制Config.ini模板 到/TestResult/83/testAutomaticallyMatchesSelectionBox/Config.ini
             config = SystemTool.readingIniConfiguration(configPath)  # 获取闪退 设备Config.ini配置文件对象
             SystemTool.setOnRegionAndKey(config, configPath, ConstantVar.DataArea, ConstantVar.DockerIDKey, DockerID)  # 根据.ini文件的区域和key设置值
         except  Exception as e:
-            SystemTool.anomalyRaise(e, f"设置dockerID时异常")  # 打印异常
+            SystemTool.anomalyRaise(e, f"设置dockerID 到Config.ini时异常")  # 打印异常
 
     def getResultToServer(self, ReprotID):
         """复制结果到服务器"""
         try:
-            command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/"+ReprotID +' /TestResult/' + ReprotID
+            #command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/"+ReprotID +' /TestResult/' + ReprotID # 复制99的/TestResult/ReprotID 到29/TestResult/ReprotID
+            command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/" + ReprotID + ' /TestResult'  # 复制99的/TestResult/ReprotID 到29/TestResult
             print(command3)
             ServerCommand(command3, IP=SERVERIP2)
         except:

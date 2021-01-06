@@ -141,7 +141,7 @@ def AccessEnvironment():
     return environment:环境服务器名称
     """
     try:
-        config = SystemTool.readingIniConfiguration(ConstantVar.EnvironmentConfig)  # 获取 环境配置.ini配置文件对象
+        config = SystemTool.readingIniConfiguration(os.path.join(SystemTool.getRootDirectory(),ConstantVar.EnvironmentConfig))  # 获取 环境配置.ini配置文件对象
         environment = SystemTool.getOnRegionAndKey(config, ConstantVar.DataArea, ConstantVar.Environment)  # 根据.ini文件的区域和key读取值   获取环境
         environment = environment.replace(ConstantVar.Develop,"") # 消除末尾Develop
         environment = environment.replace(ConstantVar.Release, "") # 消除末尾Release

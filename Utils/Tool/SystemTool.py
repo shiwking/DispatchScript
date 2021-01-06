@@ -203,8 +203,19 @@ class SystemTool(Kernel):
         return   :
         '''
         try:
-            print(config, path, area, key, value)
             config.set(area, key, value)
             config.write(open(path, "w"))
         except  Exception as e:
             SystemTool.anomalyRaise(e, f"根据.ini文件的区域和key设置值时异常")  # 打印异常
+
+    @staticmethod
+    def thereIsNoCreationNotLock(dirs):
+        """
+        判断路径存在吗不存在就创建(无锁)
+        :param dirs: 路径
+        """
+        try:
+            if not os.path.exists(dirs):
+                os.makedirs(dirs)
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, "判断路径存在吗不存在就创建(无锁)时异常")  # 打印异常

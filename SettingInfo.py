@@ -12,6 +12,7 @@ PASSWORD="root"
 DOCKERBASEURL='tcp://10.30.20.99:2375'
 DODCERIDLIST=[]
 TESTRESULT="/TestResult/"
+TESTRESULT2="/TestResult"
 PROJECEFILE="/Muilt/Muilt/"
 LOCALLOGFILES="/TestResult/"
 SCRIPTFILEPATH="/Muilt/Muilt/testflow/scripts/TestCase/"

@@ -45,8 +45,8 @@ class  InstallPKG(object):
             BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/先行/"
         elif((ConstantVar.Develop in self.environment[0])):# 如果当前选中环境包含  “Develop”
             BaseURL = "http://soft.f.xmfunny.com:8888/sausage/apk/开发/"
-        config = SystemTool.readingIniConfiguration(ConstantVar.EnvironmentConfig)  # 获取 环境配置.ini配置文件对象
-        SystemTool.setOnRegionAndKey(config, ConstantVar.EnvironmentConfig, ConstantVar.DataArea, ConstantVar.Environment, self.environment[0])  # 根据.ini文件的区域和key设置值    设置所选环境
+        config = SystemTool.readingIniConfiguration(os.path.join(SystemTool.getRootDirectory(),ConstantVar.EnvironmentConfig))  # 获取 环境配置.ini配置文件对象
+        SystemTool.setOnRegionAndKey(config, os.path.join(SystemTool.getRootDirectory(),ConstantVar.EnvironmentConfig), ConstantVar.DataArea, ConstantVar.Environment, self.environment[0])  # 根据.ini文件的区域和key设置值    设置所选环境
         url=os.path.join(BaseURL,self.TestAPKName)
         return url
 

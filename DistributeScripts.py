@@ -16,8 +16,6 @@ class DistributeScripts(object):
         # self.ATX.getDevicesIP() # 获取连接的设备id
         self.TestReSult=[]
         self.time= []
-        self.client = docker.DockerClient(base_url=DOCKERBASEURL)  # tcp://10.30.20.99:2375     远程99
-
 
     def getDevice(self):
         #TestDevices=self.ATX.devIPList #ATX连接设备获取设备列表
@@ -41,6 +39,19 @@ class DistributeScripts(object):
                 num.remove(i)
         return num
 
+    def accessEnvironment(self):
+        """
+            获取环境
+            param UUID: 设备ID
+            return environment:环境服务器名称
+            """
+        try:
+            config = SystemTool.readingIniConfiguration(os.path.join(SystemTool.getRootDirectory(),ConstantVar.EnvironmentConfig))  # 获取 环境配置.ini配置文件对象
+            environment = SystemTool.getOnRegionAndKey(config, ConstantVar.DataArea, ConstantVar.Environment)  # 根据.ini文件的区域和key读取值   获取环境
+            return str(environment)
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"获取环境时异常")  # 打印异常
+
     def AutoConfig(self):
         #记录开始时间
         starttime=time.time()
@@ -54,7 +65,7 @@ class DistributeScripts(object):
             #脚本分发
             ID = 0 # 用例运行轮数   所有设备都运行一次用例叫一轮
             while ID < JobNum: # 如果轮数小于 用例数量
-                self.DockerOperation.Runcontainers(self.getJob()[ID],self.getDevice()[ID]) # 传入 用例id 和设备id  运行一个容器来运行脚本
+                self.DockerOperation.Runcontainers(self.getJob()[ID],self.getDevice()[ID],self.accessEnvironment()) # 传入 用例id 和设备id  运行一个容器来运行脚本
                 print(self.getJob()[ID],self.getDevice()[ID],self.DockerOperation.DockerList[ID])
                 ID = ID + 1
             self.DockerOperation.TestResultConfirmation()#间隔一段确认测试是否完成  docker有没有正常在运行
@@ -79,7 +90,7 @@ class DistributeScripts(object):
                 print("开始分发脚本")
                 while DevID < DevNum:
                     print("测试脚本名称：",self.getJob()[JobID] ,"运行设备名称:",self.getDevUUID(self.getDevice()[DevID]))
-                    self.DockerOperation.Runcontainers(self.getJob()[JobID], self.getDevice()[DevID])# 传入 用例id 和设备id  运行一个容器来运行脚本
+                    self.DockerOperation.Runcontainers(self.getJob()[JobID], self.getDevice()[DevID],self.accessEnvironment())# 传入 用例id 和设备id  运行一个容器来运行脚本
                     JobID = JobID + 1
                     DevID = DevID + 1
                     # 间隔30秒确认测试是否完成
@@ -104,7 +115,7 @@ class DistributeScripts(object):
                 DevID = 0
                 JobID = (ExecutionNum * DevNum) # 平均运行用例次数 乘 设备数量
                 while DevID < Remainder: # 如果设备数量小于余数
-                    self.DockerOperation.Runcontainers(self.getJob()[JobID], self.getDevice()[DevID])# 传入 用例id 和设备id  运行一个容器来运行脚本
+                    self.DockerOperation.Runcontainers(self.getJob()[JobID], self.getDevice()[DevID],self.accessEnvironment())# 传入 用例id 和设备id  运行一个容器来运行脚本
                     DevID = DevID + 1
                     JobID=  JobID + 1
                 # 间隔30秒确认测试是否完成
