@@ -30,10 +30,14 @@ class ConstantVar():
         """文件路径及文件常量"""
         TestCasePath = os.path.join("Muilt", "Muilt", "testflow", "scripts","TestCase") # TestCase路径
         TemporaryPath = os.path.join("Utils", "Temporary") # 临时文件夹路径
+        PicturePath = os.path.join("Utils", "Picture")  # 用例图片路径
         TestResult = "TestResult"  # 测试结果文件夹
         DataJson = "data.json"
         Log = "log" # 日志文件夹
         LogHtml = "log.html" # 日志html
+
+        """图片"""
+        PrivacyAgreementAcceptance = os.path.join("Utils", "Picture","GameSystem","tpl1611209285654.png")  # 隐私协议 接受图像
 
         """文件后缀"""
         Json = ".json"  # 套件总json

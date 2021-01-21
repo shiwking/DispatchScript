@@ -2,9 +2,6 @@ __author__ = "shiwking"
 # 安装包
 import os
 import sys
-
-
-
 rootpath = str("/" + os.path.join("var", "jenkins_home","DispatchScript"))
 syspath = sys.path
 # sys.path = []
@@ -21,7 +18,7 @@ from Utils.Constant.ConstantVar import ConstantVar
 
 auto_setup(__file__)
 PWD = os.path.dirname(__file__)
-sys.path.append(rootpath)
+#sys.path.append(rootpath)
 from SettingInfo import *
 # init_device(platform="Android", uuid=deviceID) # 初始化设备
 #connect_device("Android://127.0.0.1:5037/" + deviceID)  # 连接设备 10.40.7.104:5555  7056efbb
@@ -137,7 +134,7 @@ def SuccessfulDevWriter():
 def AccessEnvironment():
     """
     获取环境服务器名称
-    param UUID: 设备ID
+    param :
     return environment:环境服务器名称
     """
     try:
@@ -157,7 +154,11 @@ def switchServer(UUID):
     """
     try:
         start_app(PKG)  # 启动游戏
-        time.sleep(25)
+        time.sleep(10)
+        picturePath = os.path.join(SystemTool.getRootDirectory(),ConstantVar.PrivacyAgreementAcceptance) # 用户协议及隐私保护指引-接受按钮图像路径
+        if(exists(Template(picturePath))):  # 如果用户协议及隐私保护指引-接受 存在
+            touch(Template(picturePath))  # 点击接受
+        time.sleep(5)
         poco = UnityPoco()
         poco.wait_for_any([poco("BtnLogin")], timeout=35)  # 等待登录按钮显示元素
         time.sleep(2)

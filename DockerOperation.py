@@ -97,14 +97,14 @@ class DockerOperation(object):
 
     def setDockerID(self,ReprotID,JobName1,DockerID):
         '''
-        设置dockerID 到Config.ini 例如：/TestResult/83/testAutomaticallyMatchesSelectionBox
+        设置dockerID 到Config.ini 例如：/TestResult/83/testAutomaticallyMatchesSelectionBox/Config.ini
         param ReprotID: 例如：83
         param JobName1:用例名
         param DockerID:dockerID
         return   :
         '''
         try:
-            SystemTool.thereIsNoCreationNotLock(os.path.join(TESTRESULT2,ReprotID,JobName1)) # 创建/TestResult/83/testAutomaticallyMatchesSelectionBox
+            SystemTool.thereIsNoCreationNotLock(os.path.join(TESTRESULT2,ReprotID,JobName1)) # docker创建/TestResult/83/testAutomaticallyMatchesSelectionBox  有同步到29
             configPath = os.path.join(TESTRESULT2,ReprotID,JobName1,ConstantVar.ConfigIni)
             SystemTool.copyFile(os.path.join(SystemTool.getRootDirectory(), ConstantVar.ConfigIniTemplate), configPath)  # 复制Config.ini模板 到/TestResult/83/testAutomaticallyMatchesSelectionBox/Config.ini
             config = SystemTool.readingIniConfiguration(configPath)  # 获取闪退 设备Config.ini配置文件对象
