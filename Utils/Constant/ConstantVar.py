@@ -31,6 +31,7 @@ class ConstantVar():
         TestCasePath = os.path.join("Muilt", "Muilt", "testflow", "scripts","TestCase") # TestCase路径
         TemporaryPath = os.path.join("Utils", "Temporary") # 临时文件夹路径
         PicturePath = os.path.join("Utils", "Picture")  # 用例图片路径
+        TESTRESULT = "TestResult" # 结果文件夹
         TestResult = "TestResult"  # 测试结果文件夹
         DataJson = "data.json"
         Log = "log" # 日志文件夹
@@ -50,6 +51,8 @@ class ConstantVar():
         DevTake = "开发服"
         Develop = "Develop" # 开发服
         Release = "Release" # 先行服
+        NormalExecution = "正常执行" # 正常执行
+        ExceptionReexecution = "异常重新执行" # 异常重新执行
 
         """.ini文件"""
         ConfigIni = "Config.ini" # .ini配置文件

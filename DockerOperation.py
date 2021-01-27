@@ -9,7 +9,8 @@ from  time import sleep
 from Utils.Tool.SystemTool import SystemTool
 from Utils.Tool.Transition import Transition
 from Utils.Constant.ConstantVar import ConstantVar
-class DockerOperation(object):
+from Utils.Tool.Kernel import Kernel
+class DockerOperation(object,Kernel):
     def __init__(self):
         self.client = docker.DockerClient(base_url=DOCKERBASEURL) # tcp://10.30.20.99:2375     远程99
         self.DockerList=[]
@@ -30,13 +31,14 @@ class DockerOperation(object):
         运行一个99机器上容器 运行用例
         JobName： 用例名.air
         DevName ：设备序列号
+        Environment：环境
         JobClass：/Muilt/Muilt/testflow/scripts/TestCase/
         """
         JobName=JobName+"  "
         DevName=DevName+"  "
         Environment = Environment + "  "
         print("python3  run.py "+JobClass+JobName+DevName+Environment)
-        Commd="python3  run.py "+JobClass+JobName+DevName+Environment
+        Commd = "python3  run.py "+JobClass+JobName+DevName+Environment
         volume = {"/Muilt": {"bind": "/Muilt", "mode": "rw"}} # volume：容器卷 意思是使用airtest镜像启动一个容器，将宿主机上的/Muilt复制一份到容器中 可读可写
         container = self.client.containers.run('airtest',Commd,volumes=volume,detach=True) # 调用99号机上run方法    airtest：99号几上镜像名 Commd：run方法所需参数 volume：容器卷 意思是使用airtest镜像启动一个容器，将宿主机上的/Muilt复制一份到容器中 可读可写
         self.DockerList.append(container.short_id)
@@ -52,31 +54,34 @@ class DockerOperation(object):
         container = self.client.containers.get(DockerID)
         return  container.logs()
 
-    def GetTestResult(self,DockerID,JobName,ADBRemoteConnectionAddress,starttime):
+    def GetTestResult(self,state,DockerID,JobName,ADBRemoteConnectionAddress,starttime):
         """
        单个用例执行后获取测试结果   执行机器10.30.20.99
+       param state:状态  分正常执行和异常重新执行
        param DockerID:dockerID
        param JobName:用例air名
        param ADBRemoteConnectionAddress:ADB远程连接地址
        param starttime:开始时间
+       return status：用例结果
        """
-        ReprotID=readReportID()
+        ReprotID = readReportID() # 读取airtestreprotlist 最大的id +1 为当前运行报告id  例如 /TestResult/83  的83
         print("开始存储%s结果"%JobName)
         Job=JobName.split('.')
-        JobName1=Job[0]
-        datatype=TESTRESULT + ReprotID
+        JobName1=Job[0] # 用例英文名
+        datatype=TESTRESULT + ReprotID # 例如：/TestResult/83
         #打包服务器上的日志文件
         ADBAddress = ADBRemoteConnectionAddress.replace(".","_") # 将ADB远程连接地址的“.” 替换为“_”
         ADBAddress = ADBAddress.replace(":", "_")  # 将ADB远程连接地址的“:” 替换为“_”
+        status = "" # 用例执行状态
         try:
             #
             sleep(5)
             ServerCommand("mkdir  " + datatype) # 99创建 /TestResult/82文件夹
             ServerCommand("mkdir  " + os.path.join(datatype,"ErrorLog")) # 99创建 /TestResult/82/ErrorLog'文件夹
             ServerCommand("mkdir  " + os.path.join(datatype,JobName1))# 99创建 /TestResult/82/testAutomaticallyMatchesSelectionBox文件夹
-            command = "docker cp " + DockerID + ":" + os.path.join(DOCKERLOGFILE,JobName1+'.log')+ " " + os.path.join(datatype,JobName1) # 从docker上复制/LogDir/testAutomaticallyMatchesSelectionBox.log  到/TestResult/83/testAutomaticallyMatchesSelectionBox
+            command = "docker cp " + DockerID + ":" + os.path.join(DOCKERLOGFILE,JobName1 + '.log') + " " + os.path.join(datatype,JobName1) # 从docker上复制/LogDir/testAutomaticallyMatchesSelectionBox.log  到99 /TestResult/83/testAutomaticallyMatchesSelectionBox
             print(command)
-            command2 = "docker cp " + DockerID + ":" + os.path.join(DOCKERLOGFILE,"data.json") + " " + os.path.join(datatype,JobName1,"data.json")# 从docker上复制/LogDir/data.json  到 /TestResult/83/testAutomaticallyMatchesSelectionBox/data.json
+            command2 = "docker cp " + DockerID + ":" + os.path.join(DOCKERLOGFILE,"data.json") + " " + os.path.join(datatype,JobName1,"data.json")# 从docker上复制/LogDir/data.json  到99 /TestResult/83/testAutomaticallyMatchesSelectionBox/data.json
             print(command2)
             cmd_result2 = ServerCommand(command2) # 执行命令
             cmd_result1 = ServerCommand(command)
@@ -94,6 +99,15 @@ class DockerOperation(object):
                 ServerCommand(command3, IP=SERVERIP2)
             except  Exception as e:
                 SystemTool.anomalyRaise(e, "根据模板生成data.json失败")  # 打印异常
+        finally:
+                if(state == ConstantVar.NormalExecution): # 只有在正常执行情况下才记录执行失败的用例
+                    # 读取本次的运行结果
+                    jsonPath = ConstantVar.slash + os.path.join(ConstantVar.TESTRESULT,ReprotID,JobName1,ConstantVar.DataJson) # data.json路径 例如：/TestResult/48/testAutomaticallyMatchesSelectionBox/data.json
+                    json_data = SystemTool.readJson(jsonPath) # 读取本次运行结果
+                    for DevName in json_data["tests"].keys(): # 读取tests下 设备远程连接id
+                        if json_data["tests"][DevName]['status'] != 0: # 如果为0说明用例执行成功 不为0则失败
+                            Kernel.FailureCase.append(JobName) # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
+
 
     def setDockerID(self,ReprotID,JobName1,DockerID):
         '''
@@ -132,12 +146,12 @@ class DockerOperation(object):
 
 
     def TestResultConfirmation(self):
-        """Docker 进程确认，每隔30秒确认Docker 进程是否结束，最长5分钟，如未结束当异常处理"""
+        """Docker 进程确认，每隔30秒确认Docker 进程是否结束，最长8分钟，如未结束当异常处理"""
         i=0
         while i<60:
             if len(self.dockerList())==0:
                break
-            sleep(5)
+            sleep(8)
             i=i+1
 
         # if len(self.dockerList())!=0:

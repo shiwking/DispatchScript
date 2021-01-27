@@ -22,7 +22,7 @@ def readReportID():
     test = re.findall(r"\d+", testdata)
     Lowlast_line=str(test[0])
     reprotID=str(int(Lowlast_line)+1)
-    print(reprotID)
+    print(f"reprotID : {reprotID}")
     db.close()
     return reprotID
 
