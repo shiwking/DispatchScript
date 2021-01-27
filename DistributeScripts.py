@@ -85,6 +85,10 @@ class DistributeScripts(object):
             #获取测试结果
             ID=0
             while ID< len(self.DockerOperation.DockerList): # 本轮次所有设备都获取一次结果
+                 print(f"DockerList:{self.DockerOperation.DockerList[ID]}")
+                 print(f"performCase:{performCase[ID]}")
+                 print(f"equipment:{equipment[ID]}")
+                 print(f"ID:{ID}")
                  self.DockerOperation.GetTestResult(DockerID=self.DockerOperation.DockerList[ID],JobName=performCase[ID],ADBRemoteConnectionAddress = equipment[ID],starttime = starttime) #单个用例执行后复制测试结果到99机上
                  ID = ID + 1
             # 结果获取完成后初始化docker 容器进程
@@ -184,9 +188,10 @@ class DistributeScripts(object):
         param failureCase:运行失败用例list
         return runtime:运行时间
         """
-        runtime = 0 # 运行时间
+        runtime = 0.0 # 运行时间
         try:
             if (len(failureCase) > 0):  # 如果有执行失败的用例  启动失败重新运行
+                self.DockerOperation.DockerList = [] # 重置dockerlist
                 print(f"需要重新运行用例{failureCase}")
                 runtime = DS.AutoConfig(DS.getDevice(), failureCase)  # 自动化用例执行及获取结果   失败重新运行
             else:
@@ -202,10 +207,10 @@ class DistributeScripts(object):
         param backrollRuntime:失败用例重新运行时间
         return :
         """
-        sumRuntion = 0 # 总运行时间
+        sumRuntion = 0.0 # 总运行时间
         try:
-            sumRuntion = CountTool.add(str(runtime),str(backrollRuntime),"%.0f")
-            DS.DockerOperation.readResult(ReprotID=readReportID(), runtime=sumRuntion)  # 解析测试结果
+            sumRuntion = float(runtime) + float(backrollRuntime)
+            DS.DockerOperation.readResult(ReprotID=readReportID(), runtime=str(sumRuntion))  # 解析测试结果
         except  Exception as e:
             SystemTool.anomalyRaise(e, f"打印自动化测试报告到数据库时异常")  # 打印异常
 
