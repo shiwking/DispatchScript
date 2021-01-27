@@ -7,7 +7,7 @@ import time
 from GetDevices import *
 from SettingInfo import *
 from Utils.Tool.Kernel import Kernel
-class DistributeScripts(object,Kernel):
+class DistributeScripts(Kernel):
     def __init__(self):
         self.testlist={}
         self.DockerOperation=DockerOperation() # 初始化docker

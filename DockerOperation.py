@@ -10,7 +10,7 @@ from Utils.Tool.SystemTool import SystemTool
 from Utils.Tool.Transition import Transition
 from Utils.Constant.ConstantVar import ConstantVar
 from Utils.Tool.Kernel import Kernel
-class DockerOperation(object,Kernel):
+class DockerOperation(Kernel):
     def __init__(self):
         self.client = docker.DockerClient(base_url=DOCKERBASEURL) # tcp://10.30.20.99:2375     远程99
         self.DockerList=[]
