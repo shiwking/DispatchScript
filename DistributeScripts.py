@@ -6,8 +6,10 @@ from CreatReportID import *
 import time
 from GetDevices import *
 from SettingInfo import *
-from Utils.Tool.Kernel import Kernel
-class DistributeScripts(Kernel):
+from Utils.Tool.CountTool import CountTool
+
+
+class DistributeScripts(object):
     def __init__(self):
         self.testlist={}
         self.DockerOperation=DockerOperation() # 初始化docker
@@ -58,15 +60,13 @@ class DistributeScripts(Kernel):
         except  Exception as e:
             SystemTool.anomalyRaise(e, f"获取环境时异常")  # 打印异常
 
-    def AutoConfig(self,equipment,performCase,state):
+    def AutoConfig(self,equipment,performCase):
         """
         自动化用例执行及获取结果
         param equipment:当前所有设备list
         param performCase:需要执行的用例list
-        param state:状态  分正常执行和异常重新执行
-        return :
+        return runtime:运行时间
         """
-        Kernel.FailureCase = [] # 初始化失败用例list
         #记录开始时间
         starttime=time.time()
         self.time.append(starttime)
@@ -85,7 +85,7 @@ class DistributeScripts(Kernel):
             #获取测试结果
             ID=0
             while ID< len(self.DockerOperation.DockerList): # 本轮次所有设备都获取一次结果
-                 self.DockerOperation.GetTestResult(state,DockerID=self.DockerOperation.DockerList[ID],JobName=performCase[ID],ADBRemoteConnectionAddress = equipment[ID],starttime = starttime) #单个用例执行后复制测试结果到99机上
+                 self.DockerOperation.GetTestResult(DockerID=self.DockerOperation.DockerList[ID],JobName=performCase[ID],ADBRemoteConnectionAddress = equipment[ID],starttime = starttime) #单个用例执行后复制测试结果到99机上
                  ID = ID + 1
             # 结果获取完成后初始化docker 容器进程
             self.DockerOperation.StopAllContainer()
@@ -114,7 +114,7 @@ class DistributeScripts(Kernel):
                 JobID = lunshu * DevNum
                 while ID < len(self.DockerOperation.DockerList):
                     print("传入DockerID：",self.DockerOperation.DockerList[ID], "传入脚本名称:", performCase[JobID])
-                    self.DockerOperation.GetTestResult(state,DockerID=self.DockerOperation.DockerList[ID],JobName=performCase[JobID],ADBRemoteConnectionAddress = equipment[ID],starttime = starttime) #单个用例执行后复制测试结果到99机上
+                    self.DockerOperation.GetTestResult(DockerID=self.DockerOperation.DockerList[ID],JobName=performCase[JobID],ADBRemoteConnectionAddress = equipment[ID],starttime = starttime) #单个用例执行后复制测试结果到99机上
                     ID = ID + 1
                     JobID=JobID+1
                 # 结果获取完成后初始化docker 容器进程
@@ -137,7 +137,7 @@ class DistributeScripts(Kernel):
                 JobID = (ExecutionNum * DevNum)
                 while ID < len(self.DockerOperation.DockerList):
                     print("传入DockerID：", self.DockerOperation.DockerList[ID], "传入脚本名称:", performCase[JobID])
-                    self.DockerOperation.GetTestResult(state,DockerID=self.DockerOperation.DockerList[ID],JobName=performCase[JobID],ADBRemoteConnectionAddress = equipment[ID],starttime = starttime)#单个用例执行后复制测试结果到99机上
+                    self.DockerOperation.GetTestResult(DockerID=self.DockerOperation.DockerList[ID],JobName=performCase[JobID],ADBRemoteConnectionAddress = equipment[ID],starttime = starttime)#单个用例执行后复制测试结果到99机上
                     ID = ID + 1
                     JobID=JobID+1
                 # 结果获取完成后初始化docker容器进程
@@ -151,21 +151,70 @@ class DistributeScripts(Kernel):
         runtime=str(int((self.time[1]-self.time[0]))/60)
         RemoteScp(ReprotID=readReportID())
         # 将测试结果存储到服务器上
-        self.DockerOperation.getResultToServer(ReprotID=readReportID())
-        #解析测试结果
-        self.DockerOperation.readResult(ReprotID=readReportID(),runtime=runtime)
+        self.DockerOperation.getResultToServer(ReprotID=readReportID()) # 复制结果到服务器 从99复制/TestResult/ReprotID到29
+        return runtime
 
+    def readExecutionResult(self):
+        """
+        读取执行结果
+        param :
+        return failureCase:运行失败用例list
+        """
+        failureCase = [] # 运行失败用例list
+        try:
+            # 读取本次的运行结果
+            path = ConstantVar.slash + os.path.join(ConstantVar.TESTRESULT, readReportID())  # 例如：/TestResult/48
+            caseList = os.listdir(path)  # 例如将/TestResult/48下所有用例文件夹组装成list
+            for TestCase in caseList:  # TestCase: 例如 ['testActionBubblesDontWorkWell', 'ErrorLog']
+                TestCaseJson = os.path.join(path, TestCase, ConstantVar.DataJson) # data.json路径 例如：/TestResult/48/testAutomaticallyMatchesSelectionBox/data.json
+                # print(f"TestCaseJson:{TestCaseJson}")
+                if TestCase == "ErrorLog":
+                    continue
+                json_data = SystemTool.readJson(TestCaseJson)  # 读取本次运行结果
+                for DevName in json_data["tests"].keys():  # 读取tests下 设备远程连接id
+                    if json_data["tests"][DevName]['status'] != 0:  # 如果为0说明用例执行成功 不为0则失败
+                        failureCase.append(TestCase + ConstantVar.Air)  # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
+            return failureCase
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"读取执行结果时异常")  # 打印异常
 
+    def backroll(self,failureCase):
+        """
+        失败用例重新运行
+        param failureCase:运行失败用例list
+        return runtime:运行时间
+        """
+        runtime = 0 # 运行时间
+        try:
+            if (len(failureCase) > 0):  # 如果有执行失败的用例  启动失败重新运行
+                print(f"需要重新运行用例{failureCase}")
+                runtime = DS.AutoConfig(DS.getDevice(), failureCase)  # 自动化用例执行及获取结果   失败重新运行
+            else:
+                print(f"没有需要重新运行的失败用例")
+            return runtime
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"失败用例重新运行时异常")  # 打印异常
 
-
+    def printResult(self,runtime,backrollRuntime):
+        """
+        打印自动化测试报告到数据库
+        param runtime:运行时间
+        param backrollRuntime:失败用例重新运行时间
+        return :
+        """
+        sumRuntion = 0 # 总运行时间
+        try:
+            sumRuntion = CountTool.add(str(runtime),str(backrollRuntime),"%.0f")
+            DS.DockerOperation.readResult(ReprotID=readReportID(), runtime=sumRuntion)  # 解析测试结果
+        except  Exception as e:
+            SystemTool.anomalyRaise(e, f"打印自动化测试报告到数据库时异常")  # 打印异常
 
 if __name__ == '__main__':
-    DS=DistributeScripts()
-    DS.AutoConfig(DS.getDevice(),DS.getJob(),ConstantVar.NormalExecution) # 自动化用例执行及获取结果
-    if(len(Kernel.FailureCase) > 0): # 如果有执行失败的用例  启动失败重新运行
-        print(f"需要重新运行用例{Kernel.FailureCase}")
-        DS.AutoConfig(DS.getDevice(), Kernel.FailureCase, ConstantVar.ExceptionReexecution)  # 自动化用例执行及获取结果   失败重新运行
-    #增加一个函数 读取所有用例的结果 将运行失败的用例组装成一个list再次运行一次
+    DS=DistributeScripts() # 初始化
+    runtime = DS.AutoConfig(DS.getDevice(),DS.getJob()) # 自动化用例执行及获取结果
+    failureCase = DS.readExecutionResult() # 读取执行结果
+    backrollRuntime = DS.backroll(failureCase) # 重新运行
+    DS.printResult(runtime,backrollRuntime) # 打印自动化测试报告到数据库
     from GetDevices import ConnectATX
     ATX = ConnectATX()
     ATX.releaseDevice() # 释放设备

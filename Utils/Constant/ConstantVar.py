@@ -51,8 +51,6 @@ class ConstantVar():
         DevTake = "开发服"
         Develop = "Develop" # 开发服
         Release = "Release" # 先行服
-        NormalExecution = "正常执行" # 正常执行
-        ExceptionReexecution = "异常重新执行" # 异常重新执行
 
         """.ini文件"""
         ConfigIni = "Config.ini" # .ini配置文件

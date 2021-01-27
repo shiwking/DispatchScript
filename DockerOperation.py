@@ -9,8 +9,7 @@ from  time import sleep
 from Utils.Tool.SystemTool import SystemTool
 from Utils.Tool.Transition import Transition
 from Utils.Constant.ConstantVar import ConstantVar
-from Utils.Tool.Kernel import Kernel
-class DockerOperation(Kernel):
+class DockerOperation(object):
     def __init__(self):
         self.client = docker.DockerClient(base_url=DOCKERBASEURL) # tcp://10.30.20.99:2375     远程99
         self.DockerList=[]
@@ -54,10 +53,9 @@ class DockerOperation(Kernel):
         container = self.client.containers.get(DockerID)
         return  container.logs()
 
-    def GetTestResult(self,state,DockerID,JobName,ADBRemoteConnectionAddress,starttime):
+    def GetTestResult(self,DockerID,JobName,ADBRemoteConnectionAddress,starttime):
         """
        单个用例执行后获取测试结果   执行机器10.30.20.99
-       param state:状态  分正常执行和异常重新执行
        param DockerID:dockerID
        param JobName:用例air名
        param ADBRemoteConnectionAddress:ADB远程连接地址
@@ -99,15 +97,6 @@ class DockerOperation(Kernel):
                 ServerCommand(command3, IP=SERVERIP2)
             except  Exception as e:
                 SystemTool.anomalyRaise(e, "根据模板生成data.json失败")  # 打印异常
-        finally:
-                if(state == ConstantVar.NormalExecution): # 只有在正常执行情况下才记录执行失败的用例
-                    # 读取本次的运行结果
-                    jsonPath = ConstantVar.slash + os.path.join(ConstantVar.TESTRESULT,ReprotID,JobName1,ConstantVar.DataJson) # data.json路径 例如：/TestResult/48/testAutomaticallyMatchesSelectionBox/data.json
-                    json_data = SystemTool.readJson(jsonPath) # 读取本次运行结果
-                    for DevName in json_data["tests"].keys(): # 读取tests下 设备远程连接id
-                        if json_data["tests"][DevName]['status'] != 0: # 如果为0说明用例执行成功 不为0则失败
-                            Kernel.FailureCase.append(JobName) # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
-
 
     def setDockerID(self,ReprotID,JobName1,DockerID):
         '''
@@ -127,7 +116,7 @@ class DockerOperation(Kernel):
             SystemTool.anomalyRaise(e, f"设置dockerID 到Config.ini时异常")  # 打印异常
 
     def getResultToServer(self, ReprotID):
-        """复制结果到服务器"""
+        """复制结果到服务器 从99复制/TestResult/ReprotID到29"""
         try:
             #command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/"+ReprotID +' /TestResult/' + ReprotID # 复制99的/TestResult/ReprotID 到29/TestResult/ReprotID
             command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/" + ReprotID + ' /TestResult'  # 复制99的/TestResult/ReprotID 到29/TestResult
