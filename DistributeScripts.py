@@ -69,6 +69,7 @@ class DistributeScripts(object):
         """
         #记录开始时间
         starttime=time.time()
+        self.time = [] # 初始化时间list
         self.time.append(starttime)
         #获取设备数/脚本数
         DevNum=len(equipment) # 获取设备数量
