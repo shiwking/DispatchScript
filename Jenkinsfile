@@ -5,6 +5,7 @@ pipeline {
         stage('InstallAPK') {
             agent {
                 docker {
+                    label 'suzhuji'
                     image 'python-jenkins'
                     args  '-v /var/jenkins_home:/var/jenkins_home'
                 }
@@ -14,9 +15,10 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('BuildTest') {
             agent {
                 docker {
+                    label 'suzhuji'
                     image 'python-jenkins'
                     args  '-v /var/jenkins_home:/var/jenkins_home'
                 }
@@ -27,3 +29,4 @@ pipeline {
         }
     }
 }
+

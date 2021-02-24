@@ -66,7 +66,7 @@ class DockerOperation(object):
         print("开始存储%s结果"%JobName)
         Job=JobName.split('.')
         JobName1=Job[0] # 用例英文名
-        datatype=TESTRESULT + ReprotID # 例如：/TestResult/83
+        datatype=TESTRESULT99 + ReprotID # 例如：/TestResult/83
         #打包服务器上的日志文件
         ADBAddress = ADBRemoteConnectionAddress.replace(".","_") # 将ADB远程连接地址的“.” 替换为“_”
         ADBAddress = ADBAddress.replace(":", "_")  # 将ADB远程连接地址的“:” 替换为“_”

@@ -158,7 +158,7 @@ def switchServer(UUID):
         picturePath = os.path.join(SystemTool.getRootDirectory(),ConstantVar.PrivacyAgreementAcceptance) # 用户协议及隐私保护指引-接受按钮图像路径
         if(exists(Template(picturePath))):  # 如果用户协议及隐私保护指引-接受 存在
             touch(Template(picturePath))  # 点击接受
-        time.sleep(5)
+        time.sleep(15)
         poco = UnityPoco()
         poco.wait_for_any([poco("BtnLogin")], timeout=35)  # 等待登录按钮显示元素
         time.sleep(2)
