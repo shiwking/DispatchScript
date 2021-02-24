@@ -1,4 +1,4 @@
-TESTRESULT='/TestResult/'
+TESTRESULT="/var/jenkins_home/TestResult/"
 import time
 from  ServerConect import *
 import json

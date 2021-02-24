@@ -31,8 +31,7 @@ class ConstantVar():
         TestCasePath = os.path.join("Muilt", "Muilt", "testflow", "scripts","TestCase") # TestCase路径
         TemporaryPath = os.path.join("Utils", "Temporary") # 临时文件夹路径
         PicturePath = os.path.join("Utils", "Picture")  # 用例图片路径
-        TESTRESULT = "TestResult" # 结果文件夹
-        TestResult = "TestResult"  # 测试结果文件夹
+        TESTRESULT = os.path.join("var", "jenkins_home", "TestResult") # 结果文件夹
         DataJson = "data.json"
         Log = "log" # 日志文件夹
         LogHtml = "log.html" # 日志html
