@@ -41,7 +41,7 @@ def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, pas
     print("脚本上传成功")
 
 def RemoteScp(ReprotID,local_file=LOCALLOGFILES, ip=SERVERIP, port=PORT, user=USERNAME, password=PASSWORD ):
-    """获取服务器上的运行结果存储到本地上"""
+    """获取服务器上的运行结果存储到99本地上"""
     print("开始下载文件到本地")
 
     ssh = paramiko.SSHClient()#绑定一个实例
@@ -49,7 +49,7 @@ def RemoteScp(ReprotID,local_file=LOCALLOGFILES, ip=SERVERIP, port=PORT, user=US
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())#远程连接如果提示yes/no时，默认为yes
     ssh.connect(ip, port, user, password,allow_agent=False,look_for_keys=False)#连接远程主机
     sftp = ssh.open_sftp()
-    remote_file = TESTRESULT + ReprotID + "/"
+    remote_file = TESTRESULT99 + ReprotID + "/"
     CaseNames=sftp.listdir(remote_file)
     print(CaseNames)
     sftp.close()
