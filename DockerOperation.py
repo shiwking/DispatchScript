@@ -93,7 +93,7 @@ class DockerOperation(object):
                 dataJson["tests"] = {ADBRemoteConnectionAddress:{"status": 2,"path": os.path.join(SystemTool.getRootDirectory(),ConstantVar.TestCasePath,JobName,ConstantVar.Log,ADBAddress,ConstantVar.LogHtml)}}  # 设置tests字典中的值
                 str_json = Transition.DictionaryTurnJsonSerialize(dataJson)  # 字典转json
                 SystemTool.writeOutJsonNoLock(str_json, os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson), "覆盖")  # 写出data.json到临时文件
-                command3 = "sshpass -p 'root' scp -r " + os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson) + ' root@10.30.20.99:' + TESTRESULT + os.path.join(ReprotID,JobName1) # 将data.json复制到99机器的 /TestResult/82/用例下
+                command3 = "sshpass -p 'root' scp -r " + os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson) + ' root@10.30.20.99:' + TESTRESULT99 + os.path.join(ReprotID,JobName1) # 将data.json复制到99机器的 /TestResult/82/用例下
                 ServerCommand(command3, IP=SERVERIP2)
             except  Exception as e:
                 SystemTool.anomalyRaise(e, "根据模板生成data.json失败")  # 打印异常
@@ -119,7 +119,7 @@ class DockerOperation(object):
         """复制结果到服务器 从99复制/TestResult/ReprotID到29"""
         try:
             #command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/"+ReprotID +' /TestResult/' + ReprotID # 复制99的/TestResult/ReprotID 到29/TestResult/ReprotID
-            command3 = "sshpass -p 'root' scp -r root@10.30.20.99:" + TESTRESULT + ReprotID + ' ' + TESTRESULT2  # 复制99的/TestResult/ReprotID 到29/TestResult
+            command3 = "sshpass -p 'root' scp -r root@10.30.20.99:" + TESTRESULT99 + ReprotID + ' ' + TESTRESULT2  # 复制99的/TestResult/ReprotID 到29/TestResult
             print(command3)
             ServerCommand(command3, IP=SERVERIP2)
         except:

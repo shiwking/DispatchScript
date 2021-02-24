@@ -11,6 +11,7 @@ PASSWORD="root"
 
 DOCKERBASEURL='tcp://10.30.20.99:2375'
 DODCERIDLIST=[]
+TESTRESULT99 = "/TestResult/" #10.30.20.99 上的 TestResult文件夹
 TESTRESULT="/var/jenkins_home/TestResult/"
 TESTRESULT2="/var/jenkins_home/TestResult"
 PROJECEFILE="/Muilt/Muilt/"
