@@ -31,6 +31,16 @@ class SystemTool(Kernel):
         raise
 
     @staticmethod
+    def anomaly(e, message):
+        """
+       打印异常
+       :param e: 异常
+       :param message: 异常信息
+       """
+        print(e.args)
+        print(message)
+
+    @staticmethod
     def readFileRStr(path):
         """
        读取指定文件内容返回字符串

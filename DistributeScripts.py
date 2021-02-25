@@ -181,7 +181,7 @@ class DistributeScripts(object):
                         failureCase.append(TestCase + ConstantVar.Air)  # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
             return failureCase
         except  Exception as e:
-            SystemTool.anomalyRaise(e, f"读取执行结果时异常")  # 打印异常
+            SystemTool.anomaly(e, f"读取执行结果时异常")  # 打印异常
 
     def backroll(self,failureCase):
         """
