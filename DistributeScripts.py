@@ -166,9 +166,11 @@ class DistributeScripts(object):
         return failureCase:运行失败用例list
         """
         failureCase = [] # 运行失败用例list
+        TestCaseJson = None
         try:
             # 读取本次的运行结果
             path = ConstantVar.slash + os.path.join(ConstantVar.TESTRESULT, readReportID())  # 例如：/TestResult/48
+            print(f"path:{path}")
             caseList = os.listdir(path)  # 例如将/TestResult/48下所有用例文件夹组装成list
             for TestCase in caseList:  # TestCase: 例如 ['testActionBubblesDontWorkWell', 'ErrorLog']
                 TestCaseJson = os.path.join(path, TestCase, ConstantVar.DataJson) # data.json路径 例如：/TestResult/48/testAutomaticallyMatchesSelectionBox/data.json
@@ -181,7 +183,7 @@ class DistributeScripts(object):
                         failureCase.append(TestCase + ConstantVar.Air)  # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
             return failureCase
         except  Exception as e:
-            SystemTool.anomaly(e, f"读取执行结果时异常")  # 打印异常
+            SystemTool.anomaly(e, f"读取执行结果时异常 异常用例{TestCaseJson}")  # 打印异常
 
     def backroll(self,failureCase):
         """
