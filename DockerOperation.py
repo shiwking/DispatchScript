@@ -72,7 +72,6 @@ class DockerOperation(object):
         ADBAddress = ADBAddress.replace(":", "_")  # 将ADB远程连接地址的“:” 替换为“_”
         status = "" # 用例执行状态
         try:
-            #
             sleep(5)
             ServerCommand("mkdir  " + datatype) # 99创建 /TestResult/82文件夹
             ServerCommand("mkdir  " + os.path.join(datatype,"ErrorLog")) # 99创建 /TestResult/82/ErrorLog'文件夹
@@ -93,9 +92,9 @@ class DockerOperation(object):
                 dataJson["tests"] = {ADBRemoteConnectionAddress:{"status": 2,"path": os.path.join(SystemTool.getRootDirectory(),ConstantVar.TestCasePath,JobName,ConstantVar.Log,ADBAddress,ConstantVar.LogHtml)}}  # 设置tests字典中的值
                 str_json = Transition.DictionaryTurnJsonSerialize(dataJson)  # 字典转json
                 SystemTool.writeOutJsonNoLock(str_json, os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson), "覆盖")  # 写出data.json到临时文件
-                command3 = "sshpass -p 'root' scp -r " + os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson) + ' root@10.30.20.99:' + TESTRESULT99 + os.path.join(ReprotID,JobName1) # 将data.json复制到99机器的 /TestResult/82/用例下
-                # 特别注意  /var/jenkins_home/DispatchScript/Jenkinsfile        需要做/var/jenkins_home容器卷  否则以上只是从99的容器复制到29的容器  并没复制到宿主机上
+                command3 = "sshpass -p 'root' scp -r " + os.path.join(SystemTool.getRootDirectory(),ConstantVar.TemporaryPath, ConstantVar.DataJson) + ' root@10.30.20.99:' + TESTRESULT99 + os.path.join(ReprotID,JobName1) + ConstantVar.slash# 将data.json复制到99机器的 /TestResult/82/用例下
                 ServerCommand(command3, IP=SERVERIP2)
+                sleep(5)
             except  Exception as e:
                 SystemTool.anomalyRaise(e, "根据模板生成data.json失败")  # 打印异常
 
@@ -117,7 +116,7 @@ class DockerOperation(object):
             SystemTool.anomalyRaise(e, f"设置dockerID 到Config.ini时异常")  # 打印异常
 
     def getResultToServer(self, ReprotID):
-        """复制结果到服务器 从99复制/TestResult/ReprotID到29"""
+        """复制结果到服务器 从99复制/TestResult/ReprotID到29 容器上"""
         try:
             #command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/"+ReprotID +' /TestResult/' + ReprotID # 复制99的/TestResult/ReprotID 到29/TestResult/ReprotID
             command3 = "sshpass -p 'root' scp -r root@10.30.20.99:" + TESTRESULT99 + ReprotID + ' ' + TESTRESULT2  # 复制99的/TestResult/ReprotID 到29/TestResult

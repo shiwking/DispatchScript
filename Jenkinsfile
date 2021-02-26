@@ -21,7 +21,6 @@ pipeline {
                     label 'suzhuji'
                     image 'python-jenkins'
                     args  '-v /var/jenkins_home:/var/jenkins_home'
-	    args '-v /var/jenkins_home/TestResult:/var/jenkins_home/TestResult'
                 }
             }
             steps {

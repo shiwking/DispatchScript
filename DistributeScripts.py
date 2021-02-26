@@ -181,6 +181,7 @@ class DistributeScripts(object):
                 for DevName in json_data["tests"].keys():  # 读取tests下 设备远程连接id
                     if json_data["tests"][DevName]['status'] != 0:  # 如果为0说明用例执行成功 不为0则失败
                         failureCase.append(TestCase + ConstantVar.Air)  # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
+            print(f"failureCase:{failureCase}")
             return failureCase
         except  Exception as e:
             SystemTool.anomaly(e, f"读取执行结果时异常 异常用例{TestCaseJson}")  # 打印异常
