@@ -177,10 +177,15 @@ class DistributeScripts(object):
                 # print(f"TestCaseJson:{TestCaseJson}")
                 if TestCase == "ErrorLog":
                     continue
-                json_data = SystemTool.readJson(TestCaseJson)  # 读取本次运行结果
-                for DevName in json_data["tests"].keys():  # 读取tests下 设备远程连接id
-                    if json_data["tests"][DevName]['status'] != 0:  # 如果为0说明用例执行成功 不为0则失败
-                        failureCase.append(TestCase + ConstantVar.Air)  # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
+                try:
+                    json_data = SystemTool.readJson(TestCaseJson)  # 读取本次运行结果
+                    for DevName in json_data["tests"].keys():  # 读取tests下 设备远程连接id
+                        if json_data["tests"][DevName]['status'] != 0:  # 如果为0说明用例执行成功 不为0则失败
+                            failureCase.append(TestCase + ConstantVar.Air)  # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
+                except  Exception as e:
+                    # 如果发生异常 很有可能是 E:\DispatchScript\DockerOperation.py  GetTestResult 异常拼装json没有生效
+                    print(f"异常TestCaseJson:{TestCaseJson}")
+                    failureCase.append(TestCase + ConstantVar.Air)  # 将失败用例例如：testAutomaticallyMatchesSelectionBox.air放入失败用例list中
             print(f"failureCase:{failureCase}")
             return failureCase
         except  Exception as e:
