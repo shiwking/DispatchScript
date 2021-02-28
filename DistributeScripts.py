@@ -161,7 +161,7 @@ class DistributeScripts(object):
 
     def readExecutionResult(self):
         """
-        读取执行结果
+        读取执行结果29
         param :
         return failureCase:运行失败用例list
         """
