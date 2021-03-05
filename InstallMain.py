@@ -30,7 +30,7 @@ class  InstallPKG(object):
             self.TestAPKName = self.Commad[1] # 上传前解除注释   apk
             self.platform=[self.Commad[2]] # 上传前解除注释      测试平台
             self.environment=[self.Commad[3]] # 上传前解除注释   自动化运行环境
-            self.language = [self.Commad[4]]  # 上传前解除注释   语种
+            self.language = self.Commad[4]  # 上传前解除注释   语种
             print(f"apk:{self.TestAPKName} 测试平台：{self.platform} 自动化运行环境：{self.environment} 语种：{self.language}")
             # self.TestAPKName = "dev_P2325_develop_F2_87899736_8d58eeec6_1abc8c97a_1ef41e0c4_0be918ffd_0a9e863.apk"   # 上传前注释
             # self.deviceCategory = ["Android"]   # 上传前注释
