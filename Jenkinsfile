@@ -11,7 +11,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'python3 -u  /var/jenkins_home/DispatchScript/InstallMain.py $TestAPKName $platform $environment'
+                sh 'python3 -u  /var/jenkins_home/DispatchScript/InstallMain.py $TestAPKName $platform $environment $language'
             }
         }
 
