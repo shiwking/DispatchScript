@@ -20,7 +20,7 @@ class ConnectATX(object):
         hearder={
             'Cookie': self.userid,
         }
-        r = requests.get(URL,headers=hearder)
+        r = requests.get(URL,headers=hearder,params={"usable": "true"}) # params={"usable": "true"}筛选出可用设备
         reprot=r.json()
         print(reprot)
         for  deviceinfo  in reprot['devices']:
