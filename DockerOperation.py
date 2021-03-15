@@ -123,7 +123,7 @@ class DockerOperation(object):
         """复制结果到服务器 从99复制/TestResult/ReprotID到29 容器上"""
         try:
             #command3 = "sshpass -p 'root' scp -r root@10.30.20.99:/TestResult/"+ReprotID +' /TestResult/' + ReprotID # 复制99的/TestResult/ReprotID 到29/TestResult/ReprotID
-            command3 = "sshpass -p 'root' scp -r root@10.30.20.99:" + TESTRESULT99 + ReprotID + ' ' + TESTRESULT2  # 复制99的/TestResult/ReprotID 到29/TestResult
+            command3 = "sshpass -p '" + PASSWORD + "' scp -r root@10.30.20.99:" + TESTRESULT99 + ReprotID + ' ' + TESTRESULT2  # 复制99的/TestResult/ReprotID 到29/TestResult
             print(command3)
             ServerCommand(command3, IP=SERVERIP2)  #SERVERIP2  10.30.20.29
         except:

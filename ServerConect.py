@@ -20,7 +20,7 @@ def ServerCommand(command,IP=SERVERIP,port=PORT,username=USERNAME,passwrod=PASSW
     ssh.close()
     return  cmd_result
 
-def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, password=PASSWORD ):
+def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, password=PASSWORD):
 
     """
     :param ip: 服务器ip地址
@@ -40,7 +40,7 @@ def SshScpPut(local_file, remote_file,ip=SERVERIP, port=PORT, user=USERNAME, pas
     sftp.put(local_file, remote_file)
     print("脚本上传成功")
 
-def RemoteScp(ReprotID,local_file=LOCALLOGFILES, ip=SERVERIP, port=PORT, user=USERNAME, password=PASSWORD ):
+def RemoteScp(ReprotID,local_file=LOCALLOGFILES, ip=SERVERIP, port=PORT, user=USERNAME, password=PASSWORD):
     """获取docker服务器上的运行结果存储到99本地上"""
     print("开始下载文件到本地")
 
