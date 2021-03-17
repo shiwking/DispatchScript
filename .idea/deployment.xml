@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="root@192.168.206.129:22" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="root@10.30.20.29:22">
     <serverData>
-      <paths name="centos7">
+      <paths name="10.30.20.29">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/var/jenkins_home/DispatchScript" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="root@192.168.206.129:22">
+      <paths name="root@10.30.20.29:22">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/pycharm_project_388" local="$PROJECT_DIR$" />
+            <mapping deploy="/var/jenkins_home/DispatchScript" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

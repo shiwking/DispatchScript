@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Tool/SystemTool.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/Utils/Picture/GameSystem" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/Utils/Tool/CountTool.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/Utils/Tool/Kernel.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/Utils/Tool/MyConfigparser.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/Utils/Tool/Mysql.py" charset="GBK" />
+  </component>
+</project>
