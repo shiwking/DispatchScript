@@ -28,7 +28,8 @@ class ConnectATX(object):
                 devUUID=deviceinfo['udid']
                 self.idleTimeout(devUUID)
                 self.DevUUIDList.append(devUUID)
-                stu={"udid":devUUID, "idleTimeout": 3600} # idleTimeout  多长时间不操作会被atx自动弹出
+                #stu={"udid":devUUID, "idleTimeout": 3600} # idleTimeout  多长时间不操作会被atx自动弹出
+                stu = {"udid": devUUID, "idleTimeout": 3600}  # idleTimeout  多长时间不操作会被atx自动弹出
                 devdata=json.dumps(stu)
                 requests.post(URL2, headers=hearder,data=devdata) #使用该设备
                 getUsingDevinfo=requests.get(URL2+'/'+devUUID, headers=hearder) #获取使用设备的UUID
