@@ -51,75 +51,73 @@ def installPKG():
     尝试使用Airtest自带安装方案,如该方案安装失败则使用ATX自带安装方案
     上述两种方案均安装失败后,则删除配置文件内的设备ID 防止后续被脚本调用
     """
-    print(G.DEVICE.uuid,"开始执行安装流程.............")
-    if PKG not in device().list_app():
-        print("APK不存在，开始安装！")
-        try:
-
-            install(APK, replace=False, install_options=["-g"])  # 正确的
-            print(G.DEVICE.uuid,":安装成功")
-            SuccessfulDevWriter()
-        except:
+    try:
+        print(G.DEVICE.uuid,"开始执行安装流程.............")
+        if PKG not in device().list_app():
+            print("APK不存在，开始安装！")
             try:
-                print("第一种方式安装失败，尝试使用第二种安装方式")
-                BaseURL=ATXPROVIDER_URL+UUID
-                print(downloadPath)
-                stu = {"url": downloadPath,"launch":True}
-                hearder = {
-                    'Cookie': userid,
-                }
-                print(BaseURL,stu,hearder)
-                Result = requests.post(BaseURL,stu,hearder)
-                RequestReprot=Result.json()
-                if RequestReprot["success"]==True:
-                    print(G.DEVICE.uuid, ":安装成功")
-                    SuccessfulDevWriter()
+
+                install(APK, replace=False, install_options=["-g"])  # 正确的
+                print(G.DEVICE.uuid,":安装成功")
+                SuccessfulDevWriter()
             except:
-                    pass
-
-
-
-
-
-    else:
-        uninstall(PKG)
-        print(G.DEVICE.uuid,":开始卸载旧版本")
-        print(G.DEVICE.uuid,":开始安装")
-        try:
-            install(APK, replace=False, install_options=["-g"])  # 正确的
-            log(G.DEVICE.uuid,":安装成功")
-            SuccessfulDevWriter()
-        except:
+                try:
+                    print("第一种方式安装失败，尝试使用第二种安装方式")
+                    BaseURL=ATXPROVIDER_URL+UUID
+                    print(downloadPath)
+                    stu = {"url": downloadPath,"launch":True}
+                    hearder = {
+                        'Cookie': userid,
+                    }
+                    print(BaseURL,stu,hearder)
+                    Result = requests.post(BaseURL,stu,hearder)
+                    RequestReprot=Result.json()
+                    if RequestReprot["success"]==True:
+                        print(G.DEVICE.uuid, ":安装成功")
+                        SuccessfulDevWriter()
+                except:
+                        pass
+        else:
+            uninstall(PKG)
+            print(G.DEVICE.uuid,":开始卸载旧版本")
+            print(G.DEVICE.uuid,":开始安装")
             try:
-                print("第一种方式安装失败，尝试使用第二种安装方式")
-                BaseURL=ATXPROVIDER_URL+UUID
-                stu = {"url": downloadPath,"launch":True}
-                hearder = {
-                    'Cookie': userid,
-                }
-                print(BaseURL,stu,hearder)
-                Result = requests.post(BaseURL,stu,hearder)
-                print(Result.json())
-                RequestReprot=Result.json()
-                if RequestReprot["success"]==True:
-                    print(G.DEVICE.uuid, ":安装成功")
-                    SuccessfulDevWriter()
-                else:
+                install(APK, replace=False, install_options=["-g"])  # 正确的
+                log(G.DEVICE.uuid,":安装成功")
+                SuccessfulDevWriter()
+            except:
+                try:
+                    print("第一种方式安装失败，尝试使用第二种安装方式")
+                    BaseURL=ATXPROVIDER_URL+UUID
+                    stu = {"url": downloadPath,"launch":True}
+                    hearder = {
+                        'Cookie': userid,
+                    }
+                    print(BaseURL,stu,hearder)
+                    Result = requests.post(BaseURL,stu,hearder)
+                    print(Result.json())
+                    RequestReprot=Result.json()
+                    if RequestReprot["success"]==True:
+                        print(G.DEVICE.uuid, ":安装成功")
+                        SuccessfulDevWriter()
+                    else:
+                        with open(DEVICEINFO, encoding='utf-8') as f:
+                            json_data = json.load(f)
+                            e1 = json_data.pop(G.DEVICE.uuid)
+                            with open(DEVICEINFO, "w") as f:
+                                json.dump(e1, f)
+                            log(G.DEVICE.uuid, "设备移除成功！")
+                        raise Exception(G.DEVICE.uuid, ":安装失败")
+                except:
+                    log(G.DEVICE.uuid, "方式2安装失败！，移除设备列表")
                     with open(DEVICEINFO, encoding='utf-8') as f:
                         json_data = json.load(f)
                         e1 = json_data.pop(G.DEVICE.uuid)
                         with open(DEVICEINFO, "w") as f:
                             json.dump(e1, f)
-                        log(G.DEVICE.uuid, "设备移除成功！")
-                    raise Exception(G.DEVICE.uuid, ":安装失败")
-            except:
-                log(G.DEVICE.uuid, "方式2安装失败！，移除设备列表")
-                with open(DEVICEINFO, encoding='utf-8') as f:
-                    json_data = json.load(f)
-                    e1 = json_data.pop(G.DEVICE.uuid)
-                    with open(DEVICEINFO, "w") as f:
-                        json.dump(e1, f)
-                    log(G.DEVICE.uuid,"设备移除成功！")
+                        log(G.DEVICE.uuid,"设备移除成功！")
+    except  Exception as e:
+        SystemTool.anomaly(e, f"{G.DEVICE.uuid}安装包时异常")  # 打印异常
 
 
 def SuccessfulDevWriter():
@@ -152,26 +150,29 @@ def switchServer(UUID):
     切换服务器
     param UUID: 设备ID
     """
+    equipmentInformation = f"[{UUID}][{G.DEVICE.uuid}]" # 设备信息
     try:
+        print(f"{equipmentInformation}开始切换服务器")
         start_app(PKG)  # 启动游戏
-        time.sleep(10)
+        time.sleep(15)
         picturePath = os.path.join(SystemTool.getRootDirectory(),ConstantVar.PrivacyAgreementAcceptance) # 用户协议及隐私保护指引-接受按钮图像路径
         if(exists(Template(picturePath))):  # 如果用户协议及隐私保护指引-接受 存在
             touch(Template(picturePath))  # 点击接受
-        time.sleep(15)
+        time.sleep(10)
         poco = UnityPoco()
         poco.wait_for_any([poco("BtnLogin")], timeout=35)  # 等待登录按钮显示元素
         time.sleep(2)
         poco("BtnServerList").click()  # 点击服务器列表
-        print(f"[{UUID}]切换自动化服务器成功")
         poco.wait_for_any([poco("Title")], timeout=20)  # 等待标题元素显示
         time.sleep(2)
         environment = AccessEnvironment() # 获取环境服务器名称
         poco(text=environment).click()  # 点击服务器
         time.sleep(3)
         stop_app(PKG) # 关闭游戏
+        print(f"{equipmentInformation} 切换服务器成功")
     except  Exception as e:
-        SystemTool.rerun(switchServer, e, f"切换服务器", UUID)  # 重新运行
+        #SystemTool.rerun(switchServer, e, f"切换服务器", UUID)  # 重新运行
+        SystemTool.anomalyRaise(e, f"{equipmentInformation}切换服务器时异常")  # 打印异常
 
 UUID = IPgetUUID(G.DEVICE.uuid)
 installPKG() # 安装包

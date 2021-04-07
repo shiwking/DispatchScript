@@ -57,3 +57,7 @@ class ConstantVar():
         DockerIDKey = "DockerID" #   DockerID key
         EnvironmentConfig = os.path.join("Utils", "IniConfig", "EnvironmentConfig.ini")  # 环境配置.ini
         Environment = "Environment" # Environment key
+
+        """通用常量"""
+        PriorityToRun = "PriorityToRun" # 优先运行
+        TheLastRun = "TheLastRun"  # 最后运行

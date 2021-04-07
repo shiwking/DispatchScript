@@ -38,14 +38,22 @@ class DistributeScripts(object):
         """
         获取所有要执行的用例
         param :
-        return caseList:用例list
+        return useCseList:用例list
         """
         result = ServerCommand("ls /Muilt/Muilt/testflow/scripts/TestCase") # 获取TestCase下所有用例 例如testAutomaticallyMatchesSelectionBox.air
         caseList = result.split("\n")
+        priorityList = []  # 优先运行list
+        lagList = []  # 最后运行list
+        useCseList = []  # 用例list
         for i in caseList:
-            if i == '':
-                caseList.remove(i) # 删除
-        return caseList
+            if (ConstantVar.PriorityToRun in i): # 如果当前用例名包含 PriorityToRun  优先运行
+                priorityList.append(i) # 用例放入 优先运行list中
+            elif (ConstantVar.TheLastRun in i): # 如果当前用例名包含 TheLastRun  最后运行
+                lagList.append(i) # 用例放入 最后运行list中
+            elif i != '':
+                useCseList.append(i)  # 用例放入 用例list中
+        useCseList = priorityList + useCseList + lagList # 合并3个list
+        return useCseList
 
     def accessEnvironment(self):
         """
