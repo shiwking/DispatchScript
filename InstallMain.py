@@ -40,6 +40,9 @@ class  InstallPKG(object):
         self.InitDevList()
         self.WiertJson()
         Mysql.UpdateLanguagesConfiguration(self.language) # 更新语种配置表
+        bool = Mysql.resetAccount(None, None, self.environment, None)  # 释放被征用账号
+        if (bool == True):
+            print(f"自动化运行环境：{self.environment} 账号释放成功" )
 
     def DownURL(self):
 
