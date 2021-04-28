@@ -76,7 +76,7 @@ def run_on_multi_device(devices, air, results, run_all):
             })
         except Exception as e:
             traceback.print_exc()
-        time.sleep(300)
+        time.sleep(120)
     return tasks
 
 
